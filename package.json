@@ -1,0 +1,10 @@
+{
+  "name": "ficus-investments-rent-manager",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Rent payment & escalation tracker for Ficus Investments",
+  "dependencies": {
+    "@netlify/neon": "^0.1.2",
+    "resend": "^4.0.1"
+  }
+}
