@@ -113,14 +113,15 @@ tbody tr:hover{background:#FAF9F7;}
 
 @media (max-width:760px){
   .field-grid{grid-template-columns:1fr;}
-  table{font-size:12px;}
-  thead th{padding:8px 6px;}
-  tbody td{padding:9px 6px;}
+  table{font-size:11.5px;}
+  thead th{padding:8px 4px;}
+  tbody td{padding:9px 4px;}
   .hide-mobile,.hide-mobile-3{display:none;}
   .prop-addr{display:none;}
-  .date-label{font-size:9.5px;}
-  .pill{padding:3px 6px;font-size:9.5px;}
-  .rent-amt{font-size:12.5px;}
+  .date-label{font-size:9px;}
+  .pill{padding:2px 5px;font-size:9px;}
+  .rent-amt{font-size:12px;}
+  .new-amt{font-size:9px;}
 }
 </style>
 </head>
@@ -253,7 +254,7 @@ function fmtMoney(n){
 }
 function fmtDate(dateStr){
   if(!dateStr) return '—';
-  return new Date(dateStr).toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'});
+  return new Date(dateStr).toLocaleDateString('en-GB', {day:'2-digit', month:'2-digit', year:'2-digit'});
 }
 function daysUntil(dateStr){
   if(!dateStr) return null;
@@ -345,8 +346,13 @@ function render(){
 }
 
 async function load(){
-  const res = await fetch(API);
-  properties = await res.json();
+  try {
+    const res = await fetch(API);
+    if(!res.ok) throw new Error('API not ready');
+    properties = await res.json();
+  } catch(err) {
+    properties = []; // API/database not connected yet — show an empty, working UI instead of a blank screen
+  }
   render();
 }
 
