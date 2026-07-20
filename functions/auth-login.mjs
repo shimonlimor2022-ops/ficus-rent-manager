@@ -6,8 +6,8 @@ export default async (req) => {
   const { email, password } = await req.json();
   if (!email || !password) return json({ error: 'Email and password are required.' }, 400);
 
-  const [row] = await sql`SELECT * FROM admin_user WHERE id = 1`;
-  if (!row || row.email !== email.toLowerCase().trim()) {
+  const [row] = await sql`SELECT * FROM team_user WHERE email = ${email.toLowerCase().trim()}`;
+  if (!row || !row.password_hash) {
     return json({ error: 'Incorrect email or password.' }, 401);
   }
 
@@ -17,7 +17,7 @@ export default async (req) => {
   }
 
   const token = randomToken();
-  await sql`UPDATE admin_user SET session_token = ${token} WHERE id = 1`;
+  await sql`UPDATE team_user SET session_token = ${token} WHERE id = ${row.id}`;
 
   return json({ ok: true }, 200, { 'Set-Cookie': sessionCookieHeader(token) });
 };
