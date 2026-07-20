@@ -1,9 +1,15 @@
-import { sql, isAuthenticated, json } from '../lib/auth.mjs';
+import { sql, getSessionUser, json } from '../lib/auth.mjs';
 
 export default async (req) => {
-  const [row] = await sql`SELECT id, email FROM admin_user WHERE id = 1`;
-  const authed = await isAuthenticated(req);
-  return json({ registered: !!row, authenticated: authed, email: authed ? row.email : null });
+  const [anyUser] = await sql`SELECT id FROM team_user LIMIT 1`;
+  const user = await getSessionUser(req);
+
+  return json({
+    registered: !!anyUser,
+    authenticated: !!user,
+    email: user ? user.email : null,
+    role: user ? user.role : null,
+  });
 };
 
 export const config = {
