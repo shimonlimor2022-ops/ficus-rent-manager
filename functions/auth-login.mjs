@@ -17,7 +17,7 @@ export default async (req) => {
   }
 
   const token = randomToken();
-  await sql`UPDATE team_user SET session_token = ${token} WHERE id = ${row.id}`;
+  await sql`UPDATE team_user SET session_token = ${token}, last_login = now() WHERE id = ${row.id}`;
 
   return json({ ok: true }, 200, { 'Set-Cookie': sessionCookieHeader(token) });
 };
