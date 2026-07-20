@@ -28,4 +28,9 @@ export default async (req) => {
     WHERE id = ${row.id}
   `;
 
-  return json({ ok: true }, 200, { 'Set-Cookie':
+  return json({ ok: true }, 200, { 'Set-Cookie': sessionCookieHeader(sessionToken) });
+};
+
+export const config = {
+  path: '/api/auth-reset',
+};
