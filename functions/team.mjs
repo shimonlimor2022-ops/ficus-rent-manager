@@ -23,7 +23,8 @@ export default async (req) => {
         password_salt = ${salt},
         invite_token = NULL,
         invite_token_expires = NULL,
-        session_token = ${sessionToken}
+        session_token = ${sessionToken},
+        last_login = now()
       WHERE id = ${row.id}
     `;
     return json({ ok: true }, 200, { 'Set-Cookie': sessionCookieHeader(sessionToken) });
@@ -33,7 +34,7 @@ export default async (req) => {
   if (!user) return json({ error: "Not signed in." }, 401);
 
   if (req.method === 'GET') {
-    const members = await sql`SELECT email, role FROM team_user ORDER BY created_at ASC`;
+    const members = await sql`SELECT email, role, last_login FROM team_user ORDER BY created_at ASC`;
     return json({ members, isOwner: user.role === 'owner', selfEmail: user.email });
   }
 
