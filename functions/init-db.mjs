@@ -37,8 +37,22 @@ export default async () => {
       ON CONFLICT (id) DO NOTHING
     `;
 
+    await sql`
+      CREATE TABLE IF NOT EXISTS admin_user (
+        id INTEGER PRIMARY KEY DEFAULT 1,
+        email TEXT,
+        password_hash TEXT,
+        password_salt TEXT,
+        session_token TEXT,
+        reset_token TEXT,
+        reset_token_expires TIMESTAMP,
+        created_at TIMESTAMP DEFAULT now(),
+        CONSTRAINT admin_single_row CHECK (id = 1)
+      )
+    `;
+
     return new Response(
-      'Success! Tables "properties" and "settings" are ready. You can delete this file now.',
+      'Success! Tables "properties", "settings", and "admin_user" are ready. You can delete this file now.',
       { headers: { 'Content-Type': 'text/plain' } }
     );
   } catch (err) {
