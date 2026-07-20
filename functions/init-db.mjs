@@ -35,7 +35,6 @@ export default async () => {
       ON CONFLICT (id) DO NOTHING
     `;
 
-    // Legacy single-admin table — kept so nothing else breaks. No longer used for login.
     await sql`
       CREATE TABLE IF NOT EXISTS admin_user (
         id INTEGER PRIMARY KEY DEFAULT 1,
@@ -50,7 +49,6 @@ export default async () => {
       )
     `;
 
-    // New multi-user team table
     await sql`
       CREATE TABLE IF NOT EXISTS team_user (
         id SERIAL PRIMARY KEY,
@@ -68,7 +66,8 @@ export default async () => {
       )
     `;
 
-    // One-time migration: move the existing single admin account into team_user as the owner
+    await sql`ALTER TABLE team_user ADD COLUMN IF NOT EXISTS last_login TIMESTAMP`;
+
     const [existingAdmin] = await sql`SELECT * FROM admin_user WHERE id = 1`;
     if (existingAdmin && existingAdmin.email) {
       await sql`
@@ -79,7 +78,7 @@ export default async () => {
     }
 
     return new Response(
-      'Success! Tables are ready. Your existing account is now the team owner. You can delete this file now.',
+      'Success! Tables are ready, including last_login tracking.',
       { headers: { 'Content-Type': 'text/plain' } }
     );
   } catch (err) {
