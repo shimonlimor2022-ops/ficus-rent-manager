@@ -1,4 +1,5 @@
 import { neon } from '@netlify/neon';
+import { isAuthenticated, json as authJson } from '../lib/auth.mjs';
 
 const sql = neon(); // uses NETLIFY_DATABASE_URL automatically
 
@@ -10,6 +11,8 @@ function json(data, status = 200) {
 }
 
 export default async (req) => {
+  if (!(await isAuthenticated(req))) return authJson({ error: 'unauthorized' }, 401);
+
   try {
     if (req.method === 'GET') {
       const rows = await sql`
