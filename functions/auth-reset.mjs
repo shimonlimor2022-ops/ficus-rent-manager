@@ -9,8 +9,8 @@ export default async (req) => {
   const issues = passwordIssues(password);
   if (issues.length) return json({ error: 'Password must include ' + issues.join(', ') + '.' }, 400);
 
-  const [row] = await sql`SELECT * FROM admin_user WHERE id = 1`;
-  if (!row || row.reset_token !== token) return json({ error: 'This reset link is invalid.' }, 400);
+  const [row] = await sql`SELECT * FROM team_user WHERE reset_token = ${token}`;
+  if (!row) return json({ error: 'This reset link is invalid.' }, 400);
   if (!row.reset_token_expires || new Date(row.reset_token_expires) < new Date()) {
     return json({ error: 'This reset link has expired. Please request a new one.' }, 400);
   }
@@ -19,18 +19,13 @@ export default async (req) => {
   const sessionToken = randomToken();
 
   await sql`
-    UPDATE admin_user SET
+    UPDATE team_user SET
       password_hash = ${hash},
       password_salt = ${salt},
       reset_token = NULL,
       reset_token_expires = NULL,
       session_token = ${sessionToken}
-    WHERE id = 1
+    WHERE id = ${row.id}
   `;
 
-  return json({ ok: true }, 200, { 'Set-Cookie': sessionCookieHeader(sessionToken) });
-};
-
-export const config = {
-  path: '/api/auth-reset',
-};
+  return json({ ok: true }, 200, { 'Set-Cookie':
