@@ -1,10 +1,40 @@
-import { sql, getSessionUser, randomToken, json } from '../lib/auth.mjs';
+import { sql, getSessionUser, hashPassword, randomToken, sessionCookieHeader, passwordIssues, json } from '../lib/auth.mjs';
 import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL;
 
 export default async (req) => {
+  if (req.method === 'PUT') {
+    // Invited member accepting the invite and setting their password
+    const { token, password } = await req.json();
+    if (!token) return json({ error: 'Missing invite token.' }, 400);
+
+    const issues = passwordIssues(password);
+    if (issues.length) return json({ error: 'Password must include ' + issues.join(', ') + '.' }, 400);
+
+    const [row] = await sql`SELECT * FROM team_user WHERE invite_token = ${token}`;
+    if (!row) return json({ error: 'This invite link is invalid.' }, 400);
+    if (!row.invite_token_expires || new Date(row.invite_token_expires) < new Date()) {
+      return json({ error: 'This invite link has expired. Ask the owner to resend it.' }, 400);
+    }
+
+    const { hash, salt } = await hashPassword(password);
+    const sessionToken = randomToken();
+
+    await sql`
+      UPDATE team_user SET
+        password_hash = ${hash},
+        password_salt = ${salt},
+        invite_token = NULL,
+        invite_token_expires = NULL,
+        session_token = ${sessionToken}
+      WHERE id = ${row.id}
+    `;
+
+    return json({ ok: true }, 200, { 'Set-Cookie': sessionCookieHeader(sessionToken) });
+  }
+
   const user = await getSessionUser(req);
   if (!user) return json({ error: 'Not signed in.' }, 401);
 
@@ -26,7 +56,7 @@ export default async (req) => {
     if (existing) return json({ error: 'This person is already on the team.' }, 409);
 
     const inviteToken = randomToken();
-    const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
+    const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
     await sql`
       INSERT INTO team_user (email, role, invite_token, invite_token_expires, invited_by)
