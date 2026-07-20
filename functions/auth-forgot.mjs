@@ -11,12 +11,12 @@ export default async (req) => {
   const genericResponse = json({ ok: true, message: 'If that email is registered, a reset link has been sent.' });
   if (!email) return genericResponse;
 
-  const [row] = await sql`SELECT * FROM admin_user WHERE id = 1`;
-  if (!row || row.email !== email.toLowerCase().trim()) return genericResponse; // don't reveal whether the account exists
+  const [row] = await sql`SELECT * FROM team_user WHERE email = ${email.toLowerCase().trim()}`;
+  if (!row) return genericResponse; // don't reveal whether the account exists
 
   const token = randomToken();
   const expires = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes
-  await sql`UPDATE admin_user SET reset_token = ${token}, reset_token_expires = ${expires.toISOString()} WHERE id = 1`;
+  await sql`UPDATE team_user SET reset_token = ${token}, reset_token_expires = ${expires.toISOString()} WHERE id = ${row.id}`;
 
   if (process.env.RESEND_API_KEY && FROM_EMAIL) {
     const origin = new URL(req.url).origin;
@@ -41,5 +41,4 @@ export default async (req) => {
 };
 
 export const config = {
-  path: '/api/auth-forgot',
-};
+  path:
