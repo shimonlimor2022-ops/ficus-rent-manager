@@ -1,5 +1,4 @@
 import { neon } from '@netlify/neon';
-
 const sql = neon();
 
 export default async () => {
@@ -30,13 +29,13 @@ export default async () => {
         CONSTRAINT settings_single_row CHECK (id = 1)
       )
     `;
-
     await sql`
       INSERT INTO settings (id, notification_emails)
       VALUES (1, '{}')
       ON CONFLICT (id) DO NOTHING
     `;
 
+    // Legacy single-admin table — kept so nothing else breaks. No longer used for login.
     await sql`
       CREATE TABLE IF NOT EXISTS admin_user (
         id INTEGER PRIMARY KEY DEFAULT 1,
@@ -51,8 +50,36 @@ export default async () => {
       )
     `;
 
+    // New multi-user team table
+    await sql`
+      CREATE TABLE IF NOT EXISTS team_user (
+        id SERIAL PRIMARY KEY,
+        email TEXT UNIQUE NOT NULL,
+        password_hash TEXT,
+        password_salt TEXT,
+        role TEXT NOT NULL DEFAULT 'member',
+        session_token TEXT,
+        reset_token TEXT,
+        reset_token_expires TIMESTAMP,
+        invite_token TEXT,
+        invite_token_expires TIMESTAMP,
+        invited_by INTEGER,
+        created_at TIMESTAMP DEFAULT now()
+      )
+    `;
+
+    // One-time migration: move the existing single admin account into team_user as the owner
+    const [existingAdmin] = await sql`SELECT * FROM admin_user WHERE id = 1`;
+    if (existingAdmin && existingAdmin.email) {
+      await sql`
+        INSERT INTO team_user (email, password_hash, password_salt, role, session_token)
+        VALUES (${existingAdmin.email}, ${existingAdmin.password_hash}, ${existingAdmin.password_salt}, 'owner', ${existingAdmin.session_token})
+        ON CONFLICT (email) DO NOTHING
+      `;
+    }
+
     return new Response(
-      'Success! Tables "properties", "settings", and "admin_user" are ready. You can delete this file now.',
+      'Success! Tables are ready. Your existing account is now the team owner. You can delete this file now.',
       { headers: { 'Content-Type': 'text/plain' } }
     );
   } catch (err) {
