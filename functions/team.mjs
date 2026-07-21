@@ -70,6 +70,19 @@ export default async (req) => {
     return json({ ok: true }, 201);
   }
 
+  if (req.method === 'PATCH') {
+    if (user.role !== 'owner') return json({ error: "Only the owner can change roles." }, 403);
+    const { email, role } = await req.json();
+    if (!email || role !== 'owner') return json({ error: "Invalid request." }, 400);
+    const cleanEmail = email.toLowerCase().trim();
+    if (cleanEmail === user.email) return json({ error: "You are already the owner." }, 400);
+    const [target] = await sql`SELECT * FROM team_user WHERE email = ${cleanEmail}`;
+    if (!target) return json({ error: "That person is not on the team." }, 404);
+    if (target.role === 'owner') return json({ error: "That person is already an owner." }, 400);
+    await sql`UPDATE team_user SET role = 'owner' WHERE email = ${cleanEmail}`;
+    return json({ ok: true });
+  }
+
   if (req.method === 'DELETE') {
     if (user.role !== 'owner') return json({ error: "Only the owner can remove team members." }, 403);
     const { email } = await req.json();
