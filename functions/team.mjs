@@ -40,10 +40,11 @@ export default async (req) => {
 
   if (req.method === 'POST') {
     if (user.role !== 'owner') return json({ error: "Only the owner can add team members." }, 403);
-    const { email } = await req.json();
+    const { email, role } = await req.json();
     if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
       return json({ error: "Please enter a valid email address." }, 400);
     }
+    const cleanRole = role === 'owner' ? 'owner' : 'member';
     const cleanEmail = email.toLowerCase().trim();
     const [existing] = await sql`SELECT id FROM team_user WHERE email = ${cleanEmail}`;
     if (existing) return json({ error: "This person is already on the team." }, 409);
@@ -51,7 +52,7 @@ export default async (req) => {
     const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
     await sql`
       INSERT INTO team_user (email, role, invite_token, invite_token_expires, invited_by)
-      VALUES (${cleanEmail}, 'member', ${inviteToken}, ${expires.toISOString()}, ${user.id})
+      VALUES (${cleanEmail}, ${cleanRole}, ${inviteToken}, ${expires.toISOString()}, ${user.id})
     `;
     if (process.env.RESEND_API_KEY && FROM_EMAIL) {
       const origin = new URL(req.url).origin;
