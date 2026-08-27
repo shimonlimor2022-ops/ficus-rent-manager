@@ -56,13 +56,19 @@ export default async (req) => {
     `;
     if (process.env.RESEND_API_KEY && FROM_EMAIL) {
       const origin = new URL(req.url).origin;
-      const joinUrl = `${origin}/?join=${inviteToken}`;
+      const joinUrl = origin + "/?join=" + inviteToken;
       try {
         await resend.emails.send({
           from: FROM_EMAIL,
           to: [cleanEmail],
-          subject: "You have been invited to Ficus Investments",
-          html: "<div style=\"font-family:Arial,sans-serif;font-size:15px;line-height:1.6;color:#111008\"><p>" + user.email + " has invited you to join the Ficus Investments rent management team.</p><p><a href=\"" + joinUrl + "\" style=\"color:#111008;font-weight:700;\">Click here to join the team</a> (link expires in 7 days).</p></div>",
+          subject: "Ficus Investments - team access setup",
+          html: "<div style=\"font-family:Arial,sans-serif;font-size:15px;line-height:1.6;color:#111008;max-width:480px\">" +
+            "<p>Hello,</p>" +
+            "<p>" + user.email + " has invited you to join the Ficus Investments rent management team. This system is used to track rental properties, payment dates, and lease information for Ficus Investments.</p>" +
+            "<p style=\"margin:24px 0;\"><a href=\"" + joinUrl + "\" style=\"background:#111008;color:#ffffff;padding:12px 20px;border-radius:6px;text-decoration:none;font-weight:700;display:inline-block;\">Accept invitation</a></p>" +
+            "<p style=\"color:#555;font-size:13px;\">This invitation link expires in 7 days. If you were not expecting this invitation, you can safely ignore this email.</p>" +
+            "<p style=\"color:#999;font-size:12px;margin-top:32px;border-top:1px solid #eee;padding-top:12px;\">Ficus Investments &middot; Rent Management System</p>" +
+            "</div>",
         });
       } catch (err) {
         console.error('Failed to send invite email:', err.message);
