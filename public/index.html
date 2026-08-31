@@ -181,6 +181,12 @@ tbody tr:hover{background:#F0EDFB;}
 .mark-paid-link{font-size:10.5px;color:var(--ok);font-weight:600;cursor:pointer;text-decoration:underline;}
 .mark-paid-link.undo{color:var(--danger);}
 
+.recap-box{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-top:10px;}
+.recap-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.02em;margin-bottom:8px;}
+.recap-title.unpaid{color:var(--danger);}
+.recap-title.ok{color:var(--ok);}
+.recap-row{display:flex;justify-content:space-between;font-size:12.5px;padding:4px 0;color:var(--text);}
+
 #printArea{display:none;}
 @media print {
   body > *:not(#printArea) { display: none !important; }
@@ -547,6 +553,7 @@ tbody tr:hover{background:#F0EDFB;}
       <div class="stat-box danger"><div class="label">Outstanding</div><div class="value" id="sumOutstanding">€0</div></div>
     </div>
     <div id="summaryRows"><div class="settings-hint">Loading…</div></div>
+    <div id="summaryRecap" style="margin-top:6px;"></div>
     <div class="modal-actions" style="justify-content:flex-end;">
       <button type="button" class="btn-secondary" onclick="closeSummary()">Close</button>
     </div>
@@ -986,6 +993,18 @@ function renderSummaryModal(){
   document.getElementById('sumOutstanding').textContent = '€' + (expected - paid).toFixed(2);
 
   renderPrintArea(expected, paid);
+  renderRecap(expected, paid);
+}
+
+function renderRecap(expected, paid){
+  const unpaid = summaryRowsData.filter(row => (Number(row.paid_amount) || 0) < summaryExpected(row));
+  const unpaidTotal = unpaid.reduce((s, row) => s + (summaryExpected(row) - (Number(row.paid_amount) || 0)), 0);
+  document.getElementById('summaryRecap').innerHTML = unpaid.length
+    ? `<div class="recap-box">
+         <div class="recap-title unpaid">Not yet paid (${unpaid.length}) — €${unpaidTotal.toFixed(2)} total outstanding</div>
+         ${unpaid.map(row => `<div class="recap-row"><span>${row.property_name}${row.contact_name ? ' — ' + row.contact_name : ''}</span><span>€${(summaryExpected(row) - (Number(row.paid_amount) || 0)).toFixed(2)} missing</span></div>`).join('')}
+       </div>`
+    : `<div class="recap-box"><div class="recap-title ok">Everyone has paid in full ✓</div></div>`;
 }
 
 function renderPrintArea(expected, paid){
