@@ -45,4 +45,44 @@ export default async (req) => {
     }
     if (req.method === 'PUT') {
       const b = await req.json();
-      if (!b.id) return json({
+      if (!b.id) return json({ error: 'missing id' }, 400);
+      if (!b.property_name) return json({ error: 'property_name is required' }, 400);
+      const taxType = b.tax_type === 'vat' ? 'vat' : 'stamp';
+      const [row] = await sql`
+        UPDATE properties SET
+          property_name = ${b.property_name},
+          address = ${b.address || null},
+          contact_name = ${b.contact_name || null},
+          contact_phone = ${b.contact_phone || null},
+          contact_email = ${b.contact_email || null},
+          current_rent = ${b.current_rent || null},
+          next_payment_date = ${b.next_payment_date || null},
+          rent_change_date = ${b.rent_change_date || null},
+          new_rent_amount = ${b.new_rent_amount || null},
+          notes = ${b.notes || null},
+          tax_type = ${taxType},
+          tax_rate = ${b.tax_rate || null},
+          lease_expiry_date = ${b.lease_expiry_date || null},
+          lease_auto_renew = ${!!b.lease_auto_renew},
+          due_day = ${b.due_day || null}
+        WHERE id = ${b.id}
+        RETURNING *
+      `;
+      if (!row) return json({ error: 'not found' }, 404);
+      return json(row);
+    }
+    if (req.method === 'DELETE') {
+      const { id } = await req.json();
+      if (!id) return json({ error: 'missing id' }, 400);
+      await sql`DELETE FROM properties WHERE id = ${id}`;
+      return json({ ok: true });
+    }
+    return json({ error: 'method not allowed' }, 405);
+  } catch (err) {
+    console.error(err);
+    return json({ error: err.message }, 500);
+  }
+};
+export const config = {
+  path: '/api/properties',
+};
