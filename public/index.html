@@ -408,6 +408,33 @@ tbody tr:hover{background:#F0EDFB;}
           <input type="number" step="0.01" id="new_rent_amount">
         </div>
 
+        <div class="section-divider">Tax &amp; lease</div>
+        <div class="field">
+          <label>Tax type</label>
+          <select id="tax_type" onchange="applyDefaultTaxRate()" style="font-family:'Inter',sans-serif;border:1px solid var(--border);border-radius:8px;padding:9px 11px;font-size:14px;background:#FCFBFA;">
+            <option value="stamp">Stamp duty (3.6%)</option>
+            <option value="vat">VAT (24%)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Tax rate (%)</label>
+          <input type="number" step="0.1" id="tax_rate">
+        </div>
+        <div class="field">
+          <label>Lease expiry date</label>
+          <input type="date" id="lease_expiry_date">
+        </div>
+        <div class="field">
+          <label>Rent due day (of month)</label>
+          <input type="number" min="1" max="31" id="due_day" placeholder="e.g. 5">
+        </div>
+        <div class="field full">
+          <label style="display:flex;align-items:center;gap:8px;">
+            <input type="checkbox" id="lease_auto_renew" style="width:auto;">
+            Auto-renewal (don't flag as expired if not cancelled in time)
+          </label>
+        </div>
+
         <div class="field full">
           <label>Notes</label>
           <textarea id="notes" rows="2"></textarea>
@@ -596,8 +623,14 @@ function openModal(){
   document.getElementById('modalTitle').textContent = 'Add property';
   document.getElementById('propForm').reset();
   document.getElementById('propId').value = '';
+  document.getElementById('tax_type').value = 'stamp';
+  document.getElementById('tax_rate').value = 3.6;
   document.getElementById('deleteFromModalBtn').style.display = 'none';
   document.getElementById('overlay').classList.add('open');
+}
+function applyDefaultTaxRate(){
+  const type = document.getElementById('tax_type').value;
+  document.getElementById('tax_rate').value = type === 'vat' ? 24 : 3.6;
 }
 function closeModal(){ document.getElementById('overlay').classList.remove('open'); }
 
@@ -615,6 +648,11 @@ function editProp(id){
   document.getElementById('next_payment_date').value = p.next_payment_date ? p.next_payment_date.substring(0,10) : '';
   document.getElementById('rent_change_date').value = p.rent_change_date ? p.rent_change_date.substring(0,10) : '';
   document.getElementById('new_rent_amount').value = p.new_rent_amount ?? '';
+  document.getElementById('tax_type').value = p.tax_type || 'stamp';
+  document.getElementById('tax_rate').value = p.tax_rate ?? (p.tax_type === 'vat' ? 24 : 3.6);
+  document.getElementById('lease_expiry_date').value = p.lease_expiry_date ? p.lease_expiry_date.substring(0,10) : '';
+  document.getElementById('due_day').value = p.due_day ?? '';
+  document.getElementById('lease_auto_renew').checked = !!p.lease_auto_renew;
   document.getElementById('notes').value = p.notes || '';
   document.getElementById('deleteFromModalBtn').style.display = 'inline-block';
   document.getElementById('overlay').classList.add('open');
@@ -662,6 +700,11 @@ document.getElementById('propForm').addEventListener('submit', async (e) => {
     rent_change_date: document.getElementById('rent_change_date').value || null,
     new_rent_amount: document.getElementById('new_rent_amount').value || null,
     notes: document.getElementById('notes').value,
+    tax_type: document.getElementById('tax_type').value,
+    tax_rate: document.getElementById('tax_rate').value || null,
+    lease_expiry_date: document.getElementById('lease_expiry_date').value || null,
+    due_day: document.getElementById('due_day').value || null,
+    lease_auto_renew: document.getElementById('lease_auto_renew').checked,
   };
   if(id){
     payload.id = Number(id);
