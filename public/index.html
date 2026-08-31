@@ -343,6 +343,8 @@ tbody tr:hover{background:#F0EDFB;}
           <th>Property</th>
           <th class="hide-mobile">Contact</th>
           <th>Current rent</th>
+          <th>Tax</th>
+          <th class="hide-mobile">Lease expiry</th>
           <th>Next payment</th>
           <th>Rent change</th>
           <th class="hide-mobile-3"></th>
@@ -522,6 +524,23 @@ function daysUntil(dateStr){
   return Math.round((d - today) / 86400000);
 }
 
+function taxLabel(p){
+  if(!p.tax_type) return '—';
+  const rate = p.tax_rate ?? (p.tax_type === 'vat' ? 24 : 3.6);
+  const name = p.tax_type === 'vat' ? 'VAT' : 'Stamp duty';
+  return `${name} · ${rate}%`;
+}
+
+function leaseExpiryPill(p){
+  const days = daysUntil(p.lease_expiry_date);
+  if(days === null) return '<span class="pill pill-muted">Not set</span>';
+  if(p.lease_auto_renew) return '<span class="pill pill-ok">Auto-renews</span>';
+  if(days < 0) return '<span class="pill pill-danger">Expired</span>';
+  if(days <= 7) return `<span class="pill pill-danger">${days}d left</span>`;
+  if(days <= 90) return `<span class="pill pill-warn">${days}d left</span>`;
+  return '<span class="pill pill-ok">OK</span>';
+}
+
 function paymentPill(p){
   const days = daysUntil(p.next_payment_date);
   if(days === null) return '<span class="pill pill-muted">Not set</span>';
@@ -590,6 +609,8 @@ function render(){
           ${wa ? `<a class="wa-link" href="${wa}" target="_blank" onclick="event.stopPropagation()">WhatsApp →</a>` : ''}
         </td>
         <td data-label="Current rent"><span class="rent-amt">${fmtMoney(p.current_rent)}</span></td>
+        <td data-label="Tax"><span class="date-label" style="margin-top:0;">${taxLabel(p)}</span></td>
+        <td data-label="Lease expiry" class="hide-mobile">${leaseExpiryPill(p)}<div class="date-label">${fmtDate(p.lease_expiry_date)}</div></td>
         <td data-label="Next payment">${paymentPill(p)}<div class="date-label">${fmtDate(p.next_payment_date)}</div></td>
         <td data-label="Rent change">${rentChangePill(p)}<div class="date-label">${fmtDate(p.rent_change_date)}</div>${p.new_rent_amount ? `<div class="new-amt">→ ${fmtMoney(p.new_rent_amount)}</div>` : ''}</td>
         <td class="hide-mobile-3">
