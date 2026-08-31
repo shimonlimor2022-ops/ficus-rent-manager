@@ -637,6 +637,19 @@ async function deleteProp(id){
 
 document.getElementById('propForm').addEventListener('submit', async (e) => {
   e.preventDefault();
+
+  // Cross-field validation: rent_change_date and new_rent_amount must be filled together, or both left empty.
+  const rcd = document.getElementById('rent_change_date');
+  const nra = document.getElementById('new_rent_amount');
+  rcd.setCustomValidity('');
+  nra.setCustomValidity('');
+  if(rcd.value && !nra.value){
+    nra.setCustomValidity('Enter the new rent amount, or clear the rent change date.');
+  } else if(nra.value && !rcd.value){
+    rcd.setCustomValidity('Enter the rent change date, or clear the new rent amount.');
+  }
+  if(!e.target.reportValidity()) return;
+
   const id = document.getElementById('propId').value;
   const payload = {
     property_name: document.getElementById('property_name').value,
