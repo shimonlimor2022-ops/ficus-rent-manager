@@ -77,7 +77,29 @@ export default async () => {
       `;
     }
 
-    return new Response(
+        await sql`
+      ALTER TABLE properties
+        ADD COLUMN IF NOT EXISTS tax_type TEXT DEFAULT 'stamp',
+        ADD COLUMN IF NOT EXISTS tax_rate NUMERIC(5,2) DEFAULT 3.6,
+        ADD COLUMN IF NOT EXISTS lease_expiry_date DATE,
+        ADD COLUMN IF NOT EXISTS lease_auto_renew BOOLEAN DEFAULT false,
+        ADD COLUMN IF NOT EXISTS due_day INTEGER,
+        ADD COLUMN IF NOT EXISTS alert_3mo_sent BOOLEAN DEFAULT false,
+        ADD COLUMN IF NOT EXISTS alert_1wk_sent BOOLEAN DEFAULT false
+    `;
+
+    await sql`
+      CREATE TABLE IF NOT EXISTS property_payments (
+        id SERIAL PRIMARY KEY,
+        property_id INTEGER NOT NULL REFERENCES properties(id) ON DELETE CASCADE,
+        year INTEGER NOT NULL,
+        month INTEGER NOT NULL,
+        paid_amount NUMERIC(10,2) NOT NULL DEFAULT 0,
+        updated_at TIMESTAMP DEFAULT now(),
+        updated_by TEXT,
+        UNIQUE(property_id, year, month)
+      )
+    `;return new Response(
       'Success! Tables are ready, including last_login tracking.',
       { headers: { 'Content-Type': 'text/plain' } }
     );
