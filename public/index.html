@@ -181,6 +181,19 @@ tbody tr:hover{background:#F0EDFB;}
 .mark-paid-link{font-size:10.5px;color:var(--ok);font-weight:600;cursor:pointer;text-decoration:underline;}
 .mark-paid-link.undo{color:var(--danger);}
 
+#printArea{display:none;}
+@media print {
+  body > *:not(#printArea) { display: none !important; }
+  #printArea { display: block !important; padding: 24px; font-family: 'Inter', sans-serif; color:#111008; }
+  #printArea h1{font-family:'Outfit',sans-serif;font-size:20px;margin-bottom:2px;}
+  #printArea .print-sub{color:#6B6560;font-size:12px;margin-bottom:18px;}
+  #printArea table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:18px;}
+  #printArea th{text-align:left;border-bottom:1.5px solid #111008;padding:6px 8px;font-size:10.5px;text-transform:uppercase;letter-spacing:.02em;}
+  #printArea td{padding:6px 8px;border-bottom:1px solid #ddd;}
+  #printArea .print-total td{font-weight:700;border-top:1.5px solid #111008;border-bottom:none;}
+  #printArea .print-unpaid-title{font-weight:700;color:#B03018;font-size:12px;text-transform:uppercase;margin-bottom:8px;}
+}
+
 
 .table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;}
 
@@ -201,6 +214,8 @@ tbody tr:hover{background:#F0EDFB;}
 </style>
 </head>
 <body>
+
+<div id="printArea"></div>
 
 <!-- Auth overlay: sign up / log in / forgot / reset password -->
 <div class="auth-screen" id="authScreen">
@@ -520,7 +535,20 @@ tbody tr:hover{background:#F0EDFB;}
     </div>
     <div id="summaryRows"><div class="settings-hint">Loading…</div></div>
     <div class="modal-actions">
-      <button type="button" class="btn-secondary" onclick="window.print()">🖨️ Print</button>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button type="button" class="btn-secondary" onclick="window.print()" style="display:flex;align-items:center;gap:6px;">
+          <svg width="16" height="16" viewBox="0 0 90 90"><path d="M 82.316 20.766 H 69.021 V 7.764 c 0 -2.664 -2.167 -4.831 -4.831 -4.831 H 25.811 c -2.664 0 -4.831 2.167 -4.831 4.831 v 13.002 H 7.683 C 3.447 20.766 0 24.213 0 28.449 v 34.511 c 0 4.236 3.447 7.683 7.683 7.683 h 13.296 v 11.593 c 0 2.664 2.167 4.831 4.831 4.831 h 38.379 c 2.664 0 4.831 -2.167 4.831 -4.831 V 70.643 h 13.296 c 4.236 0 7.684 -3.446 7.684 -7.683 V 28.449 C 90 24.213 86.553 20.766 82.316 20.766 z M 22.979 7.764 c 0 -1.561 1.27 -2.831 2.831 -2.831 h 38.379 c 1.562 0 2.831 1.27 2.831 2.831 v 13.002 H 22.979 V 7.764 z M 67.021 82.236 c 0 1.562 -1.27 2.831 -2.831 2.831 H 25.811 c -1.561 0 -2.831 -1.27 -2.831 -2.831 V 55.953 h 44.041 V 82.236 z M 67 30.628 c -0.828 0 -1.5 -0.672 -1.5 -1.5 s 0.672 -1.5 1.5 -1.5 s 1.5 0.672 1.5 1.5 S 67.828 30.628 67 30.628 z M 74 30.628 c -0.828 0 -1.5 -0.672 -1.5 -1.5 s 0.672 -1.5 1.5 -1.5 s 1.5 0.672 1.5 1.5 S 74.828 30.628 74 30.628 z M 81 30.628 c -0.828 0 -1.5 -0.672 -1.5 -1.5 s 0.672 -1.5 1.5 -1.5 s 1.5 0.672 1.5 1.5 S 81.828 30.628 81 30.628 z" fill="currentColor"/><path d="M 59.705 65.953 h -30 c -0.552 0 -1 -0.447 -1 -1 s 0.448 -1 1 -1 h 30 c 0.553 0 1 0.447 1 1 S 60.258 65.953 59.705 65.953 z" fill="currentColor"/><path d="M 59.705 75.953 h -30 c -0.552 0 -1 -0.447 -1 -1 s 0.448 -1 1 -1 h 30 c 0.553 0 1 0.447 1 1 S 60.258 75.953 59.705 75.953 z" fill="currentColor"/></svg>
+          Print
+        </button>
+        <button type="button" class="btn-secondary" onclick="exportSummaryCSV()" style="display:flex;align-items:center;gap:6px;">
+          <svg width="16" height="16" viewBox="0 0 90 90"><path d="M 80.959 78.79 H 19.13 c -1.588 0 -2.876 -1.288 -2.876 -2.876 V 14.085 c 0 -1.588 1.288 -2.876 2.876 -2.876 h 61.829 c 1.588 0 2.876 1.288 2.876 2.876 v 61.829 C 83.835 77.503 82.547 78.79 80.959 78.79 z" fill="rgb(255,255,255)"/><path d="M 80.959 80.79 H 19.13 c -2.688 0 -4.876 -2.187 -4.876 -4.875 v -61.83 c 0 -2.688 2.188 -4.876 4.876 -4.876 h 61.829 c 2.688 0 4.876 2.188 4.876 4.876 v 61.83 C 85.835 78.604 83.647 80.79 80.959 80.79 z M 19.13 13.209 c -0.483 0 -0.876 0.393 -0.876 0.876 v 61.83 c 0 0.482 0.393 0.875 0.876 0.875 h 61.829 c 0.483 0 0.876 -0.393 0.876 -0.875 v -61.83 c 0 -0.483 -0.393 -0.876 -0.876 -0.876 H 19.13 z" fill="rgb(25,117,76)"/><rect x="61.05" y="20.47" width="15.93" height="4" fill="rgb(25,117,76)"/><rect x="61.05" y="31.74" width="15.93" height="4" fill="rgb(25,117,76)"/><rect x="61.05" y="43" width="15.93" height="4" fill="rgb(25,117,76)"/><rect x="61.05" y="54.26" width="15.93" height="4" fill="rgb(25,117,76)"/><rect x="61.05" y="65.53" width="15.93" height="4" fill="rgb(25,117,76)"/><rect x="39.76" y="20.47" width="15.93" height="4" fill="rgb(25,117,76)"/><rect x="39.76" y="31.74" width="15.93" height="4" fill="rgb(25,117,76)"/><rect x="39.76" y="43" width="15.93" height="4" fill="rgb(25,117,76)"/><rect x="39.76" y="54.26" width="15.93" height="4" fill="rgb(25,117,76)"/><rect x="39.76" y="65.53" width="15.93" height="4" fill="rgb(25,117,76)"/><polygon points="51.33,90 6.17,78.79 6.17,11.21 51.33,0" fill="rgb(25,117,76)"/><polygon points="38.15,28.21 31.01,28.62 26.67,37.72 22.56,29.1 15.8,29.48 23.2,45 15.8,60.52 22.56,60.9 26.67,52.28 31.01,61.38 38.15,61.79 30.14,45" fill="rgb(255,255,255)"/></svg>
+          Export to Excel
+        </button>
+        <button type="button" class="btn-secondary" onclick="emailSummaryPlaceholder()" style="display:flex;align-items:center;gap:6px;">
+          <svg width="16" height="16" viewBox="0 0 90 90"><path d="M 81.055 84.001 H 8.945 C 4.013 84.001 0 79.988 0 75.056 V 30.34 c 0 -4.933 4.013 -8.945 8.945 -8.945 H 49.19 c 0.553 0 1 0.448 1 1 s -0.447 1 -1 1 H 8.945 C 5.116 23.395 2 26.511 2 30.34 v 44.715 c 0 3.83 3.116 6.945 6.945 6.945 h 72.109 c 3.83 0 6.945 -3.115 6.945 -6.945 V 42.671 c 0 -0.552 0.447 -1 1 -1 s 1 0.448 1 1 v 32.385 C 90 79.988 85.987 84.001 81.055 84.001 z" fill="currentColor"/><path d="M 44.797 61.203 c -1.531 0 -3.065 -0.549 -4.29 -1.655 l -29.433 -26.62 c -0.41 -0.371 -0.441 -1.003 -0.071 -1.413 c 0.37 -0.41 1.003 -0.441 1.413 -0.071 l 29.432 26.62 c 1.747 1.578 4.413 1.506 6.07 -0.166 l 13.65 -13.762 c 0.391 -0.393 1.022 -0.394 1.414 -0.006 c 0.393 0.389 0.395 1.022 0.006 1.414 l -13.65 13.762 C 48.089 60.567 46.444 61.203 44.797 61.203 z" fill="currentColor"/><path d="M 73.604 38.791 c -9.041 0 -16.396 -7.355 -16.396 -16.396 S 64.563 5.999 73.604 5.999 C 82.645 5.999 90 13.354 90 22.395 S 82.645 38.791 73.604 38.791 z M 73.604 7.999 c -7.938 0 -14.396 6.458 -14.396 14.396 s 6.458 14.396 14.396 14.396 C 81.542 36.791 88 30.333 88 22.395 S 81.542 7.999 73.604 7.999 z" fill="currentColor"/><path d="M 77.294 27.831 h -2.604 V 15.959 c 0 -0.396 -0.233 -0.754 -0.596 -0.915 c -0.361 -0.161 -0.784 -0.092 -1.077 0.175 l -3.775 3.433 c -0.408 0.372 -0.438 1.004 -0.067 1.413 c 0.372 0.41 1.006 0.438 1.413 0.067 l 2.103 -1.912 v 9.611 h -2.775 c -0.553 0 -1 0.448 -1 1 s 0.447 1 1 1 h 7.38 c 0.553 0 1 -0.448 1 -1 S 77.847 27.831 77.294 27.831 z" fill="currentColor"/></svg>
+          Email summary
+        </button>
+      </div>
       <button type="button" class="btn-secondary" onclick="closeSummary()">Close</button>
     </div>
   </div>
@@ -957,6 +985,64 @@ function renderSummaryModal(){
   document.getElementById('sumExpected').textContent = '€' + expected.toFixed(2);
   document.getElementById('sumPaid').textContent = '€' + paid.toFixed(2);
   document.getElementById('sumOutstanding').textContent = '€' + (expected - paid).toFixed(2);
+
+  renderPrintArea(expected, paid);
+}
+
+function renderPrintArea(expected, paid){
+  const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const monthLabel = `${monthNames[summaryMonth-1]} ${summaryYear}`;
+  const today = new Date().toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'});
+
+  const bodyRows = summaryRowsData.map(row => {
+    const exp = summaryExpected(row);
+    const pd = Number(row.paid_amount) || 0;
+    return `<tr><td>${row.property_name}</td><td>€${exp.toFixed(2)}</td><td>€${pd.toFixed(2)}</td></tr>`;
+  }).join('');
+
+  const unpaid = summaryRowsData.filter(row => (Number(row.paid_amount) || 0) < summaryExpected(row));
+  const unpaidTotal = unpaid.reduce((s, row) => s + (summaryExpected(row) - (Number(row.paid_amount) || 0)), 0);
+  const unpaidHtml = unpaid.length
+    ? `<div class="print-unpaid-title">Not yet paid (${unpaid.length}) — €${unpaidTotal.toFixed(2)} total outstanding</div>
+       <table><thead><tr><th>Property</th><th>Missing</th></tr></thead><tbody>${
+         unpaid.map(row => `<tr><td>${row.property_name} — ${row.contact_name || ''}</td><td>€${(summaryExpected(row) - (Number(row.paid_amount) || 0)).toFixed(2)}</td></tr>`).join('')
+       }</tbody></table>`
+    : `<div class="print-unpaid-title" style="color:var(--ok);">Everyone has paid in full ✓</div>`;
+
+  document.getElementById('printArea').innerHTML = `
+    <h1>Ficus Investments — Monthly Rent Summary</h1>
+    <div class="print-sub">${monthLabel} · generated ${today}</div>
+    <table>
+      <thead><tr><th>Property</th><th>Expected</th><th>Paid</th></tr></thead>
+      <tbody>${bodyRows}</tbody>
+      <tfoot><tr class="print-total"><td>Total</td><td>€${expected.toFixed(2)}</td><td>€${paid.toFixed(2)}</td></tr></tfoot>
+    </table>
+    ${unpaidHtml}
+  `;
+}
+
+function emailSummaryPlaceholder(){
+  alert("Email sending isn't built yet — this button is a placeholder for now. Use Print or Export to Excel in the meantime.");
+}
+
+function exportSummaryCSV(){
+  const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const rows = [['Property','Contact','Expected','Paid','Status']];
+  summaryRowsData.forEach(row => {
+    const exp = summaryExpected(row);
+    const pd = Number(row.paid_amount) || 0;
+    rows.push([row.property_name, row.contact_name || '', exp.toFixed(2), pd.toFixed(2), pd >= exp && exp > 0 ? 'Paid' : 'Not paid']);
+  });
+  const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\r\n');
+  const blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `ficus-summary-${summaryYear}-${String(summaryMonth).padStart(2,'0')}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }
 
 async function setSummaryPaid(propertyId, amount){
