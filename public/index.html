@@ -161,6 +161,27 @@ tbody tr:hover{background:#F0EDFB;}
 .add-email-btn{font-size:13px;color:var(--text);background:var(--bg);border:1px dashed var(--border);border-radius:8px;padding:9px;cursor:pointer;text-align:center;font-family:'Inter',sans-serif;}
 .settings-hint{font-size:12.5px;color:var(--muted);margin-bottom:14px;line-height:1.5;}
 
+.month-nav{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:16px;}
+.month-nav button{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:#fff;cursor:pointer;font-size:14px;}
+.month-nav button:hover{background:var(--bg);}
+.month-label{font-family:'Outfit',sans-serif;font-weight:600;font-size:15px;min-width:140px;text-align:center;}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:18px;}
+.stat-box{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:11px 13px;}
+.stat-box .label{font-size:10.5px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.02em;}
+.stat-box .value{font-family:'Outfit',sans-serif;font-size:18px;font-weight:700;margin-top:3px;}
+.stat-box.ok .value{color:var(--ok);}
+.stat-box.danger .value{color:var(--danger);}
+@media(max-width:480px){.stat-grid{grid-template-columns:1fr;}}
+.summary-row{border:1px solid var(--border);border-radius:10px;padding:11px 13px;margin-bottom:8px;}
+.summary-row-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+.summary-pay-line{display:flex;align-items:center;gap:8px;margin-top:8px;padding-top:8px;border-top:1px solid #F0EDE9;flex-wrap:wrap;}
+.summary-amt-wrap{position:relative;display:inline-flex;align-items:center;}
+.summary-amt-wrap .cur{position:absolute;left:8px;font-size:12.5px;color:var(--muted);pointer-events:none;}
+.summary-amt-wrap input{width:80px;border:1px solid var(--border);border-radius:7px;padding:6px 6px 6px 20px;font-size:12.5px;font-family:'Inter';}
+.mark-paid-link{font-size:10.5px;color:var(--ok);font-weight:600;cursor:pointer;text-decoration:underline;}
+.mark-paid-link.undo{color:var(--danger);}
+
+
 .table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;}
 
 @media (max-width:760px){
@@ -316,6 +337,10 @@ tbody tr:hover{background:#F0EDFB;}
       <button class="btn-pill" onclick="openModal()">
         <svg width="16" height="16" viewBox="0 0 90 90"><circle cx="45" cy="45" r="45" fill="rgb(32,196,203)"/><path d="M 41.901 78.5 c -1.657 0 -3 -1.343 -3 -3 V 20.698 c 0 -1.657 1.343 -3 3 -3 s 3 1.343 3 3 V 75.5 C 44.901 77.157 43.558 78.5 41.901 78.5 z" fill="rgb(27,167,173)"/><path d="M 69.302 51.1 H 14.5 c -1.657 0 -3 -1.343 -3 -3 s 1.343 -3 3 -3 h 54.802 c 1.657 0 3 1.343 3 3 S 70.959 51.1 69.302 51.1 z" fill="rgb(27,167,173)"/><path d="M 45.099 75.302 c -1.657 0 -3 -1.343 -3 -3 V 17.5 c 0 -1.657 1.343 -3 3 -3 s 3 1.343 3 3 v 54.802 C 48.1 73.959 46.756 75.302 45.099 75.302 z" fill="rgb(255,255,255)"/><path d="M 72.5 47.9 H 17.698 c -1.657 0 -3 -1.343 -3 -3 s 1.343 -3 3 -3 H 72.5 c 1.657 0 3 1.343 3 3 S 74.157 47.9 72.5 47.9 z" fill="rgb(255,255,255)"/></svg>
         Add property
+      </button>
+      <button class="btn-pill" onclick="openSummary()">
+        <svg width="16" height="16" viewBox="0 0 90 90"><rect x="8" y="50" width="16" height="32" rx="3" fill="rgb(32,196,203)"/><rect x="37" y="30" width="16" height="52" rx="3" fill="rgb(27,167,173)"/><rect x="66" y="12" width="16" height="70" rx="3" fill="rgb(17,16,8)"/></svg>
+        Monthly Summary
       </button>
       <button class="btn-pill" onclick="openAddUser()">
         <svg width="16" height="16" viewBox="0 0 90 90"><path d="M 38.877 3 c 7.785 0 14.118 6.333 14.118 14.118 v 6.139 c 0 7.785 -6.333 14.118 -14.118 14.118 c -7.785 0 -14.118 -6.333 -14.118 -14.118 v -6.139 C 24.759 9.333 31.092 3 38.877 3 M 38.877 0 L 38.877 0 c -9.415 0 -17.118 7.703 -17.118 17.118 v 6.139 c 0 9.415 7.703 17.118 17.118 17.118 h 0 c 9.415 0 17.118 -7.703 17.118 -17.118 v -6.139 C 55.995 7.703 48.292 0 38.877 0 L 38.877 0 z" fill="rgb(0,0,0)"/><path d="M 28.783 45.846 c 3.191 1.489 6.582 2.244 10.094 2.244 c 3.512 0 6.902 -0.754 10.093 -2.243 c 5.525 1.049 10.54 4.089 14.101 8.458 c -9.261 2.711 -15.968 11.282 -15.968 21.298 c 0 4.05 1.115 7.983 3.165 11.397 H 9.286 V 69.347 C 9.286 57.902 17.606 47.958 28.783 45.846 M 48.516 42.727 c -2.896 1.499 -6.169 2.363 -9.639 2.363 c -3.47 0 -6.743 -0.863 -9.639 -2.363 C 16.296 44.659 6.286 55.889 6.286 69.347 v 17.707 C 6.286 88.674 7.612 90 9.232 90 h 47.391 c -3.99 -3.521 -6.52 -8.658 -6.52 -14.397 c 0 -10.209 7.969 -18.535 18.022 -19.154 C 64.145 49.228 56.966 43.988 48.516 42.727 L 48.516 42.727 z" fill="rgb(0,0,0)"/><path d="M 69.317 64.206 c 6.284 0 11.397 5.113 11.397 11.397 S 75.601 87 69.317 87 S 57.92 81.887 57.92 75.603 S 63.033 64.206 69.317 64.206 M 69.317 61.206 c -7.951 0 -14.397 6.446 -14.397 14.397 S 61.366 90 69.317 90 s 14.397 -6.446 14.397 -14.397 S 77.268 61.206 69.317 61.206 L 69.317 61.206 z" fill="rgb(0,0,0)"/><path d="M 75.324 77.104 H 63.31 c -0.828 0 -1.5 -0.672 -1.5 -1.5 s 0.672 -1.5 1.5 -1.5 h 12.015 c 0.828 0 1.5 0.672 1.5 1.5 S 76.152 77.104 75.324 77.104 z" fill="rgb(0,0,0)"/><path d="M 69.317 83.11 c -0.828 0 -1.5 -0.672 -1.5 -1.5 V 69.596 c 0 -0.828 0.672 -1.5 1.5 -1.5 s 1.5 0.672 1.5 1.5 V 81.61 C 70.817 82.438 70.146 83.11 69.317 83.11 z" fill="rgb(0,0,0)"/></svg>
@@ -479,6 +504,28 @@ tbody tr:hover{background:#F0EDFB;}
   </div>
 </div>
 
+<!-- Monthly Summary modal -->
+<div class="overlay" id="summaryOverlay">
+  <div class="modal" style="max-width:520px;">
+    <h2>Monthly Summary</h2>
+    <div class="month-nav">
+      <button onclick="changeSummaryMonth(-1)">‹</button>
+      <div class="month-label" id="summaryMonthLabel"></div>
+      <button onclick="changeSummaryMonth(1)">›</button>
+    </div>
+    <div class="stat-grid">
+      <div class="stat-box"><div class="label">Expected</div><div class="value" id="sumExpected">€0</div></div>
+      <div class="stat-box ok"><div class="label">Paid</div><div class="value" id="sumPaid">€0</div></div>
+      <div class="stat-box danger"><div class="label">Outstanding</div><div class="value" id="sumOutstanding">€0</div></div>
+    </div>
+    <div id="summaryRows"><div class="settings-hint">Loading…</div></div>
+    <div class="modal-actions">
+      <button type="button" class="btn-secondary" onclick="window.print()">🖨️ Print</button>
+      <button type="button" class="btn-secondary" onclick="closeSummary()">Close</button>
+    </div>
+  </div>
+</div>
+
 <!-- Add user modal -->
 <div class="overlay" id="addUserOverlay">
   <div class="modal" style="max-width:420px;">
@@ -507,7 +554,9 @@ tbody tr:hover{background:#F0EDFB;}
 const API = '/api/properties';
 const TEAM_API = '/api/team';
 const SETTINGS_API = '/api/settings';
+const PAYMENTS_API = '/api/payments';
 let properties = [];
+let summaryYear, summaryMonth, summaryRowsData = [], currentUserEmail = null;
 
 function fmtMoney(n){
   if(n === null || n === undefined || n === '') return '—';
@@ -837,6 +886,91 @@ document.getElementById('teamOverlay').addEventListener('click', (e) => {
   if(e.target.id === 'teamOverlay') closeTeam();
 });
 
+/* Monthly Summary */
+function openSummary(){
+  const now = new Date();
+  summaryYear = now.getFullYear();
+  summaryMonth = now.getMonth() + 1;
+  document.getElementById('summaryOverlay').classList.add('open');
+  loadSummary();
+}
+function closeSummary(){ document.getElementById('summaryOverlay').classList.remove('open'); }
+document.addEventListener('DOMContentLoaded', () => {
+  const el = document.getElementById('summaryOverlay');
+  if(el) el.addEventListener('click', (e) => { if(e.target.id === 'summaryOverlay') closeSummary(); });
+});
+
+function changeSummaryMonth(delta){
+  summaryMonth += delta;
+  if(summaryMonth > 12){ summaryMonth = 1; summaryYear++; }
+  if(summaryMonth < 1){ summaryMonth = 12; summaryYear--; }
+  loadSummary();
+}
+
+function summaryExpected(row){
+  const rent = Number(row.current_rent) || 0;
+  const rate = Number(row.tax_rate) || 0;
+  return +(rent + rent * rate / 100).toFixed(2);
+}
+
+async function loadSummary(){
+  const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('summaryMonthLabel').textContent = `${monthNames[summaryMonth-1]} ${summaryYear}`;
+  document.getElementById('summaryRows').innerHTML = '<div class="settings-hint">Loading…</div>';
+  try {
+    const res = await fetch(`${PAYMENTS_API}?year=${summaryYear}&month=${summaryMonth}`);
+    summaryRowsData = await res.json();
+    renderSummaryModal();
+  } catch(err) {
+    document.getElementById('summaryRows').innerHTML = '<div class="settings-hint">Could not load the summary.</div>';
+  }
+}
+
+function renderSummaryModal(){
+  let expected = 0, paid = 0;
+  document.getElementById('summaryRows').innerHTML = summaryRowsData.map(row => {
+    const exp = summaryExpected(row);
+    const pd = Number(row.paid_amount) || 0;
+    expected += exp; paid += pd;
+    const isPaid = pd >= exp && exp > 0;
+    const updated = row.updated_at ? `Updated ${fmtDate(row.updated_at)}${row.updated_by ? ' — ' + row.updated_by : ''}` : 'Not yet marked';
+    return `<div class="summary-row">
+      <div class="summary-row-top">
+        <div>
+          <div class="prop-name" style="font-size:13px;">${row.property_name}</div>
+          <div class="date-label">${updated}</div>
+        </div>
+        <div style="text-align:right;">
+          <span class="pill ${isPaid ? 'pill-ok' : 'pill-danger'}">${isPaid ? 'Paid' : 'Not paid'}</span>
+        </div>
+      </div>
+      <div class="summary-pay-line">
+        <span class="summary-amt-wrap"><span class="cur">€</span><input type="number" value="${pd}" onchange="setSummaryPaid(${row.id}, this.value)"></span>
+        <span class="date-label" style="margin-top:0;">of €${exp.toFixed(2)}</span>
+        ${!isPaid
+          ? `<span class="mark-paid-link" onclick="setSummaryPaid(${row.id}, ${exp})">Mark fully paid</span>`
+          : `<span class="mark-paid-link undo" onclick="setSummaryPaid(${row.id}, 0)">Mark as not paid</span>`}
+      </div>
+    </div>`;
+  }).join('') || '<div class="settings-hint">No properties yet.</div>';
+
+  document.getElementById('sumExpected').textContent = '€' + expected.toFixed(2);
+  document.getElementById('sumPaid').textContent = '€' + paid.toFixed(2);
+  document.getElementById('sumOutstanding').textContent = '€' + (expected - paid).toFixed(2);
+}
+
+async function setSummaryPaid(propertyId, amount){
+  try {
+    await fetch(PAYMENTS_API, {
+      method: 'PUT', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ property_id: propertyId, year: summaryYear, month: summaryMonth, paid_amount: Number(amount) || 0, updated_by: currentUserEmail })
+    });
+    await loadSummary();
+  } catch(err) {
+    alert('Could not save this — please try again.');
+  }
+}
+
 function openAddUser(){
   document.getElementById('newUserEmail').value = '';
   document.getElementById('newUserRole').value = 'member';
@@ -912,6 +1046,7 @@ async function initAuth(){
   const status = await res.json();
 
   if (status.authenticated) {
+    currentUserEmail = status.email;
     document.getElementById('authScreen').style.display = 'none';
     document.getElementById('appContent').style.display = 'block';
     load();
