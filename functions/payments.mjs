@@ -40,4 +40,22 @@ export default async (req) => {
         return json({ error: 'property_id, year and month are required' }, 400);
       }
       const [row] = await sql`
-        INSERT INTO property_payments (property_id, year, month, paid_amount,
+        INSERT INTO property_payments (property_id, year, month, paid_amount, updated_by)
+        VALUES (${b.property_id}, ${b.year}, ${b.month}, ${b.paid_amount || 0}, ${b.updated_by || null})
+        ON CONFLICT (property_id, year, month)
+        DO UPDATE SET paid_amount = ${b.paid_amount || 0}, updated_by = ${b.updated_by || null}, updated_at = now()
+        RETURNING *
+      `;
+      return json(row);
+    }
+
+    return json({ error: 'method not allowed' }, 405);
+  } catch (err) {
+    console.error(err);
+    return json({ error: err.message }, 500);
+  }
+};
+
+export const config = {
+  path: '/api/payments',
+};
