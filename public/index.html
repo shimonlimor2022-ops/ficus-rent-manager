@@ -111,12 +111,6 @@ tbody tr:hover{background:#F0EDFB;}
 .prop-addr{font-size:12.5px;color:var(--muted);margin-top:2px;}
 .contact-name{font-weight:500;}
 .contact-sub{font-size:12px;color:var(--muted);margin-top:1px;}
-.wa-link{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;color:var(--ok);text-decoration:none;margin-top:4px;font-weight:600;}
-.wa-link:hover{text-decoration:underline;}
-.wa-icon{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;vertical-align:middle;margin-inline-start:6px;flex-shrink:0;line-height:0;}
-.wa-icon:hover{opacity:0.85;}
-.wa-text{display:block;font-size:11px;font-weight:500;color:#1DA851;text-decoration:none;margin-top:3px;}
-.wa-text:hover{text-decoration:underline;}
 .rent-amt{font-family:'Inter',sans-serif;font-weight:700;font-size:14px;}
 .pill{display:inline-block;padding:4px 10px;border-radius:99px;font-size:11px;font-weight:600;white-space:nowrap;letter-spacing:0.02em;}
 .pill-ok{background:var(--ok-light);color:var(--ok);}
@@ -161,45 +155,6 @@ tbody tr:hover{background:#F0EDFB;}
 .add-email-btn{font-size:13px;color:var(--text);background:var(--bg);border:1px dashed var(--border);border-radius:8px;padding:9px;cursor:pointer;text-align:center;font-family:'Inter',sans-serif;}
 .settings-hint{font-size:12.5px;color:var(--muted);margin-bottom:14px;line-height:1.5;}
 
-.month-nav{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:16px;}
-.month-nav button{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:#fff;cursor:pointer;font-size:14px;}
-.month-nav button:hover{background:var(--bg);}
-.month-label{font-family:'Outfit',sans-serif;font-weight:600;font-size:15px;min-width:140px;text-align:center;}
-.stat-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:18px;}
-.stat-box{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:11px 13px;}
-.stat-box .label{font-size:10.5px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.02em;}
-.stat-box .value{font-family:'Outfit',sans-serif;font-size:18px;font-weight:700;margin-top:3px;}
-.stat-box.ok .value{color:var(--ok);}
-.stat-box.danger .value{color:var(--danger);}
-@media(max-width:480px){.stat-grid{grid-template-columns:1fr;}}
-.summary-row{border:1px solid var(--border);border-radius:10px;padding:11px 13px;margin-bottom:8px;}
-.summary-row-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
-.summary-pay-line{display:flex;align-items:center;gap:8px;margin-top:8px;padding-top:8px;border-top:1px solid #F0EDE9;flex-wrap:wrap;}
-.summary-amt-wrap{position:relative;display:inline-flex;align-items:center;}
-.summary-amt-wrap .cur{position:absolute;left:8px;font-size:12.5px;color:var(--muted);pointer-events:none;}
-.summary-amt-wrap input{width:80px;border:1px solid var(--border);border-radius:7px;padding:6px 6px 6px 20px;font-size:12.5px;font-family:'Inter';}
-.mark-paid-link{font-size:10.5px;color:var(--ok);font-weight:600;cursor:pointer;text-decoration:underline;}
-.mark-paid-link.undo{color:var(--danger);}
-
-.recap-box{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-top:10px;}
-.recap-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.02em;margin-bottom:8px;}
-.recap-title.unpaid{color:var(--danger);}
-.recap-title.ok{color:var(--ok);}
-.recap-row{display:flex;justify-content:space-between;font-size:12.5px;padding:4px 0;color:var(--text);}
-
-#printArea{display:none;}
-@media print {
-  body > *:not(#printArea) { display: none !important; }
-  #printArea { display: block !important; padding: 24px; font-family: 'Inter', sans-serif; color:#111008; }
-  #printArea h1{font-family:'Outfit',sans-serif;font-size:20px;margin-bottom:2px;}
-  #printArea .print-sub{color:#6B6560;font-size:12px;margin-bottom:18px;}
-  #printArea table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:18px;}
-  #printArea th{text-align:left;border-bottom:1.5px solid #111008;padding:6px 8px;font-size:10.5px;text-transform:uppercase;letter-spacing:.02em;}
-  #printArea td{padding:6px 8px;border-bottom:1px solid #ddd;}
-  #printArea .print-total td{font-weight:700;border-top:1.5px solid #111008;border-bottom:none;}
-  #printArea .print-unpaid-title{font-weight:700;color:#B03018;font-size:12px;text-transform:uppercase;margin-bottom:8px;}
-}
-
 
 .table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;}
 
@@ -220,8 +175,6 @@ tbody tr:hover{background:#F0EDFB;}
 </style>
 </head>
 <body>
-
-<div id="printArea"></div>
 
 <!-- Auth overlay: sign up / log in / forgot / reset password -->
 <div class="auth-screen" id="authScreen">
@@ -359,10 +312,6 @@ tbody tr:hover{background:#F0EDFB;}
         <svg width="16" height="16" viewBox="0 0 90 90"><circle cx="45" cy="45" r="45" fill="rgb(32,196,203)"/><path d="M 41.901 78.5 c -1.657 0 -3 -1.343 -3 -3 V 20.698 c 0 -1.657 1.343 -3 3 -3 s 3 1.343 3 3 V 75.5 C 44.901 77.157 43.558 78.5 41.901 78.5 z" fill="rgb(27,167,173)"/><path d="M 69.302 51.1 H 14.5 c -1.657 0 -3 -1.343 -3 -3 s 1.343 -3 3 -3 h 54.802 c 1.657 0 3 1.343 3 3 S 70.959 51.1 69.302 51.1 z" fill="rgb(27,167,173)"/><path d="M 45.099 75.302 c -1.657 0 -3 -1.343 -3 -3 V 17.5 c 0 -1.657 1.343 -3 3 -3 s 3 1.343 3 3 v 54.802 C 48.1 73.959 46.756 75.302 45.099 75.302 z" fill="rgb(255,255,255)"/><path d="M 72.5 47.9 H 17.698 c -1.657 0 -3 -1.343 -3 -3 s 1.343 -3 3 -3 H 72.5 c 1.657 0 3 1.343 3 3 S 74.157 47.9 72.5 47.9 z" fill="rgb(255,255,255)"/></svg>
         Add property
       </button>
-      <button class="btn-pill" onclick="openSummary()">
-        <svg width="16" height="16" viewBox="0 0 90 90"><rect x="8" y="50" width="16" height="32" rx="3" fill="rgb(32,196,203)"/><rect x="37" y="30" width="16" height="52" rx="3" fill="rgb(27,167,173)"/><rect x="66" y="12" width="16" height="70" rx="3" fill="rgb(17,16,8)"/></svg>
-        Monthly Summary
-      </button>
       <button class="btn-pill" onclick="openAddUser()">
         <svg width="16" height="16" viewBox="0 0 90 90"><path d="M 38.877 3 c 7.785 0 14.118 6.333 14.118 14.118 v 6.139 c 0 7.785 -6.333 14.118 -14.118 14.118 c -7.785 0 -14.118 -6.333 -14.118 -14.118 v -6.139 C 24.759 9.333 31.092 3 38.877 3 M 38.877 0 L 38.877 0 c -9.415 0 -17.118 7.703 -17.118 17.118 v 6.139 c 0 9.415 7.703 17.118 17.118 17.118 h 0 c 9.415 0 17.118 -7.703 17.118 -17.118 v -6.139 C 55.995 7.703 48.292 0 38.877 0 L 38.877 0 z" fill="rgb(0,0,0)"/><path d="M 28.783 45.846 c 3.191 1.489 6.582 2.244 10.094 2.244 c 3.512 0 6.902 -0.754 10.093 -2.243 c 5.525 1.049 10.54 4.089 14.101 8.458 c -9.261 2.711 -15.968 11.282 -15.968 21.298 c 0 4.05 1.115 7.983 3.165 11.397 H 9.286 V 69.347 C 9.286 57.902 17.606 47.958 28.783 45.846 M 48.516 42.727 c -2.896 1.499 -6.169 2.363 -9.639 2.363 c -3.47 0 -6.743 -0.863 -9.639 -2.363 C 16.296 44.659 6.286 55.889 6.286 69.347 v 17.707 C 6.286 88.674 7.612 90 9.232 90 h 47.391 c -3.99 -3.521 -6.52 -8.658 -6.52 -14.397 c 0 -10.209 7.969 -18.535 18.022 -19.154 C 64.145 49.228 56.966 43.988 48.516 42.727 L 48.516 42.727 z" fill="rgb(0,0,0)"/><path d="M 69.317 64.206 c 6.284 0 11.397 5.113 11.397 11.397 S 75.601 87 69.317 87 S 57.92 81.887 57.92 75.603 S 63.033 64.206 69.317 64.206 M 69.317 61.206 c -7.951 0 -14.397 6.446 -14.397 14.397 S 61.366 90 69.317 90 s 14.397 -6.446 14.397 -14.397 S 77.268 61.206 69.317 61.206 L 69.317 61.206 z" fill="rgb(0,0,0)"/><path d="M 75.324 77.104 H 63.31 c -0.828 0 -1.5 -0.672 -1.5 -1.5 s 0.672 -1.5 1.5 -1.5 h 12.015 c 0.828 0 1.5 0.672 1.5 1.5 S 76.152 77.104 75.324 77.104 z" fill="rgb(0,0,0)"/><path d="M 69.317 83.11 c -0.828 0 -1.5 -0.672 -1.5 -1.5 V 69.596 c 0 -0.828 0.672 -1.5 1.5 -1.5 s 1.5 0.672 1.5 1.5 V 81.61 C 70.817 82.438 70.146 83.11 69.317 83.11 z" fill="rgb(0,0,0)"/></svg>
         Add user
@@ -390,6 +339,7 @@ tbody tr:hover{background:#F0EDFB;}
           <th class="hide-mobile">Contact</th>
           <th>Current rent</th>
           <th>Tax</th>
+          <th>Total</th>
           <th class="hide-mobile">Lease expiry</th>
           <th>Next payment</th>
           <th>Rent change</th>
@@ -525,41 +475,6 @@ tbody tr:hover{background:#F0EDFB;}
   </div>
 </div>
 
-<!-- Monthly Summary modal -->
-<div class="overlay" id="summaryOverlay">
-  <div class="modal" style="max-width:520px;">
-    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:18px;">
-      <h2 style="margin-bottom:0;">Monthly Summary</h2>
-      <div style="display:flex;gap:6px;">
-        <button type="button" class="icon-round-btn" title="Print" onclick="window.print()">
-          <svg width="16" height="16" viewBox="0 0 90 90"><path d="M 82.316 20.766 H 69.021 V 7.764 c 0 -2.664 -2.167 -4.831 -4.831 -4.831 H 25.811 c -2.664 0 -4.831 2.167 -4.831 4.831 v 13.002 H 7.683 C 3.447 20.766 0 24.213 0 28.449 v 34.511 c 0 4.236 3.447 7.683 7.683 7.683 h 13.296 v 11.593 c 0 2.664 2.167 4.831 4.831 4.831 h 38.379 c 2.664 0 4.831 -2.167 4.831 -4.831 V 70.643 h 13.296 c 4.236 0 7.684 -3.446 7.684 -7.683 V 28.449 C 90 24.213 86.553 20.766 82.316 20.766 z M 22.979 7.764 c 0 -1.561 1.27 -2.831 2.831 -2.831 h 38.379 c 1.562 0 2.831 1.27 2.831 2.831 v 13.002 H 22.979 V 7.764 z M 67.021 82.236 c 0 1.562 -1.27 2.831 -2.831 2.831 H 25.811 c -1.561 0 -2.831 -1.27 -2.831 -2.831 V 55.953 h 44.041 V 82.236 z M 67 30.628 c -0.828 0 -1.5 -0.672 -1.5 -1.5 s 0.672 -1.5 1.5 -1.5 s 1.5 0.672 1.5 1.5 S 67.828 30.628 67 30.628 z M 74 30.628 c -0.828 0 -1.5 -0.672 -1.5 -1.5 s 0.672 -1.5 1.5 -1.5 s 1.5 0.672 1.5 1.5 S 74.828 30.628 74 30.628 z M 81 30.628 c -0.828 0 -1.5 -0.672 -1.5 -1.5 s 0.672 -1.5 1.5 -1.5 s 1.5 0.672 1.5 1.5 S 81.828 30.628 81 30.628 z" fill="currentColor"/><path d="M 59.705 65.953 h -30 c -0.552 0 -1 -0.447 -1 -1 s 0.448 -1 1 -1 h 30 c 0.553 0 1 0.447 1 1 S 60.258 65.953 59.705 65.953 z" fill="currentColor"/><path d="M 59.705 75.953 h -30 c -0.552 0 -1 -0.447 -1 -1 s 0.448 -1 1 -1 h 30 c 0.553 0 1 0.447 1 1 S 60.258 75.953 59.705 75.953 z" fill="currentColor"/></svg>
-        </button>
-        <button type="button" class="icon-round-btn" title="Export to Excel" onclick="exportSummaryCSV()">
-          <svg width="16" height="16" viewBox="0 0 90 90"><path d="M 80.959 78.79 H 19.13 c -1.588 0 -2.876 -1.288 -2.876 -2.876 V 14.085 c 0 -1.588 1.288 -2.876 2.876 -2.876 h 61.829 c 1.588 0 2.876 1.288 2.876 2.876 v 61.829 C 83.835 77.503 82.547 78.79 80.959 78.79 z" fill="rgb(255,255,255)"/><path d="M 80.959 80.79 H 19.13 c -2.688 0 -4.876 -2.187 -4.876 -4.875 v -61.83 c 0 -2.688 2.188 -4.876 4.876 -4.876 h 61.829 c 2.688 0 4.876 2.188 4.876 4.876 v 61.83 C 85.835 78.604 83.647 80.79 80.959 80.79 z M 19.13 13.209 c -0.483 0 -0.876 0.393 -0.876 0.876 v 61.83 c 0 0.482 0.393 0.875 0.876 0.875 h 61.829 c 0.483 0 0.876 -0.393 0.876 -0.875 v -61.83 c 0 -0.483 -0.393 -0.876 -0.876 -0.876 H 19.13 z" fill="rgb(25,117,76)"/><rect x="61.05" y="20.47" width="15.93" height="4" fill="rgb(25,117,76)"/><rect x="61.05" y="31.74" width="15.93" height="4" fill="rgb(25,117,76)"/><rect x="61.05" y="43" width="15.93" height="4" fill="rgb(25,117,76)"/><rect x="61.05" y="54.26" width="15.93" height="4" fill="rgb(25,117,76)"/><rect x="61.05" y="65.53" width="15.93" height="4" fill="rgb(25,117,76)"/><rect x="39.76" y="20.47" width="15.93" height="4" fill="rgb(25,117,76)"/><rect x="39.76" y="31.74" width="15.93" height="4" fill="rgb(25,117,76)"/><rect x="39.76" y="43" width="15.93" height="4" fill="rgb(25,117,76)"/><rect x="39.76" y="54.26" width="15.93" height="4" fill="rgb(25,117,76)"/><rect x="39.76" y="65.53" width="15.93" height="4" fill="rgb(25,117,76)"/><polygon points="51.33,90 6.17,78.79 6.17,11.21 51.33,0" fill="rgb(25,117,76)"/><polygon points="38.15,28.21 31.01,28.62 26.67,37.72 22.56,29.1 15.8,29.48 23.2,45 15.8,60.52 22.56,60.9 26.67,52.28 31.01,61.38 38.15,61.79 30.14,45" fill="rgb(255,255,255)"/></svg>
-        </button>
-        <button type="button" class="icon-round-btn" title="Email" onclick="emailSummaryPlaceholder()">
-          <svg width="16" height="16" viewBox="0 0 90 90"><path d="M 81.055 84.001 H 8.945 C 4.013 84.001 0 79.988 0 75.056 V 30.34 c 0 -4.933 4.013 -8.945 8.945 -8.945 H 49.19 c 0.553 0 1 0.448 1 1 s -0.447 1 -1 1 H 8.945 C 5.116 23.395 2 26.511 2 30.34 v 44.715 c 0 3.83 3.116 6.945 6.945 6.945 h 72.109 c 3.83 0 6.945 -3.115 6.945 -6.945 V 42.671 c 0 -0.552 0.447 -1 1 -1 s 1 0.448 1 1 v 32.385 C 90 79.988 85.987 84.001 81.055 84.001 z" fill="currentColor"/><path d="M 44.797 61.203 c -1.531 0 -3.065 -0.549 -4.29 -1.655 l -29.433 -26.62 c -0.41 -0.371 -0.441 -1.003 -0.071 -1.413 c 0.37 -0.41 1.003 -0.441 1.413 -0.071 l 29.432 26.62 c 1.747 1.578 4.413 1.506 6.07 -0.166 l 13.65 -13.762 c 0.391 -0.393 1.022 -0.394 1.414 -0.006 c 0.393 0.389 0.395 1.022 0.006 1.414 l -13.65 13.762 C 48.089 60.567 46.444 61.203 44.797 61.203 z" fill="currentColor"/><path d="M 73.604 38.791 c -9.041 0 -16.396 -7.355 -16.396 -16.396 S 64.563 5.999 73.604 5.999 C 82.645 5.999 90 13.354 90 22.395 S 82.645 38.791 73.604 38.791 z M 73.604 7.999 c -7.938 0 -14.396 6.458 -14.396 14.396 s 6.458 14.396 14.396 14.396 C 81.542 36.791 88 30.333 88 22.395 S 81.542 7.999 73.604 7.999 z" fill="currentColor"/><path d="M 77.294 27.831 h -2.604 V 15.959 c 0 -0.396 -0.233 -0.754 -0.596 -0.915 c -0.361 -0.161 -0.784 -0.092 -1.077 0.175 l -3.775 3.433 c -0.408 0.372 -0.438 1.004 -0.067 1.413 c 0.372 0.41 1.006 0.438 1.413 0.067 l 2.103 -1.912 v 9.611 h -2.775 c -0.553 0 -1 0.448 -1 1 s 0.447 1 1 1 h 7.38 c 0.553 0 1 -0.448 1 -1 S 77.847 27.831 77.294 27.831 z" fill="currentColor"/></svg>
-        </button>
-      </div>
-    </div>
-    <div class="month-nav">
-      <button onclick="changeSummaryMonth(-1)">‹</button>
-      <div class="month-label" id="summaryMonthLabel"></div>
-      <button onclick="changeSummaryMonth(1)">›</button>
-    </div>
-    <div class="stat-grid">
-      <div class="stat-box"><div class="label">Expected</div><div class="value" id="sumExpected">€0</div></div>
-      <div class="stat-box ok"><div class="label">Paid</div><div class="value" id="sumPaid">€0</div></div>
-      <div class="stat-box danger"><div class="label">Outstanding</div><div class="value" id="sumOutstanding">€0</div></div>
-    </div>
-    <div id="summaryRows"><div class="settings-hint">Loading…</div></div>
-    <div id="summaryRecap" style="margin-top:6px;"></div>
-    <div class="modal-actions" style="justify-content:flex-end;">
-      <button type="button" class="btn-secondary" onclick="closeSummary()">Close</button>
-    </div>
-  </div>
-</div>
-
 <!-- Add user modal -->
 <div class="overlay" id="addUserOverlay">
   <div class="modal" style="max-width:420px;">
@@ -588,9 +503,7 @@ tbody tr:hover{background:#F0EDFB;}
 const API = '/api/properties';
 const TEAM_API = '/api/team';
 const SETTINGS_API = '/api/settings';
-const PAYMENTS_API = '/api/payments';
 let properties = [];
-let summaryYear, summaryMonth, summaryRowsData = [], currentUserEmail = null;
 
 function fmtMoney(n){
   if(n === null || n === undefined || n === '') return '—';
@@ -614,6 +527,17 @@ function taxLabel(p){
   return `${name} · ${rate}%`;
 }
 
+function totalWithTax(p){
+  if(p.current_rent === null || p.current_rent === undefined || p.current_rent === '') return null;
+  const rent = Number(p.current_rent);
+  const rate = Number(p.tax_rate ?? (p.tax_type === 'vat' ? 24 : 3.6));
+  return +(rent + rent * rate / 100).toFixed(2);
+}
+function totalLabel(p){
+  const total = totalWithTax(p);
+  return total === null ? '—' : fmtMoney(total);
+}
+
 function leaseExpiryPill(p){
   const days = daysUntil(p.lease_expiry_date);
   if(days === null) return '<span class="pill pill-muted">Not set</span>';
@@ -627,10 +551,10 @@ function leaseExpiryPill(p){
 function paymentPill(p){
   const days = daysUntil(p.next_payment_date);
   if(days === null) return '<span class="pill pill-muted">Not set</span>';
-  if(days < 0) return '<span class="pill pill-danger">Overdue</span>';
-  if(days === 0) return '<span class="pill pill-danger">Due today</span>';
-  if(days <= 3) return `<span class="pill pill-warn">Due in ${days}d</span>`;
-  return '<span class="pill pill-ok">Scheduled</span>';
+  if(days < 0) return '<span class="pill pill-danger">Expired</span>';
+  if(days <= 7) return `<span class="pill pill-danger">${days}d left</span>`;
+  if(days <= 90) return `<span class="pill pill-warn">${days}d left</span>`;
+  return '<span class="pill pill-ok">OK</span>';
 }
 
 function rentChangePill(p){
@@ -640,13 +564,6 @@ function rentChangePill(p){
   if(days < 0) return '<span class="pill pill-muted">Applied</span>';
   if(days <= 14) return `<span class="pill pill-warn">In ${days}d</span>`;
   return '<span class="pill pill-ok">Scheduled</span>';
-}
-
-function waLink(p){
-  if(!p.contact_phone) return null;
-  const phone = p.contact_phone.replace(/[^0-9+]/g,'').replace('+','');
-  const msg = encodeURIComponent(`Hi, this is regarding ${p.property_name}.`);
-  return `https://wa.me/${phone}?text=${msg}`;
 }
 
 function renderSummary(){
@@ -681,18 +598,17 @@ function render(){
   } else {
     emptyState.style.display = 'none';
     tbody.innerHTML = properties.map(p => {
-      const wa = waLink(p);
       return `
       <tr onclick="editProp(${p.id})" style="cursor:pointer;">
-        <td data-label="Property"><div class="prop-name">${p.property_name}${wa ? ` <a class="wa-text" href="${wa}" target="_blank" onclick="event.stopPropagation()">WhatsApp tenant</a>` : ''}</div><div class="prop-addr">${p.address || ''}</div></td>
+        <td data-label="Property"><div class="prop-name">${p.property_name}</div><div class="prop-addr">${p.address || ''}</div></td>
         <td data-label="Contact" class="hide-mobile">
           <div class="contact-name">${p.contact_name || '—'}</div>
           ${p.contact_phone ? `<div class="contact-sub">${p.contact_phone}</div>` : ''}
           ${p.contact_email ? `<div class="contact-sub">${p.contact_email}</div>` : ''}
-          ${wa ? `<a class="wa-link" href="${wa}" target="_blank" onclick="event.stopPropagation()">WhatsApp →</a>` : ''}
         </td>
         <td data-label="Current rent"><span class="rent-amt">${fmtMoney(p.current_rent)}</span></td>
         <td data-label="Tax"><span class="date-label" style="margin-top:0;">${taxLabel(p)}</span></td>
+        <td data-label="Total"><span class="rent-amt">${totalLabel(p)}</span></td>
         <td data-label="Lease expiry" class="hide-mobile">${leaseExpiryPill(p)}<div class="date-label">${fmtDate(p.lease_expiry_date)}</div></td>
         <td data-label="Next payment">${paymentPill(p)}<div class="date-label">${fmtDate(p.next_payment_date)}</div></td>
         <td data-label="Rent change">${rentChangePill(p)}<div class="date-label">${fmtDate(p.rent_change_date)}</div>${p.new_rent_amount ? `<div class="new-amt">→ ${fmtMoney(p.new_rent_amount)}</div>` : ''}</td>
@@ -920,161 +836,6 @@ document.getElementById('teamOverlay').addEventListener('click', (e) => {
   if(e.target.id === 'teamOverlay') closeTeam();
 });
 
-/* Monthly Summary */
-function openSummary(){
-  const now = new Date();
-  summaryYear = now.getFullYear();
-  summaryMonth = now.getMonth() + 1;
-  document.getElementById('summaryOverlay').classList.add('open');
-  loadSummary();
-}
-function closeSummary(){ document.getElementById('summaryOverlay').classList.remove('open'); }
-document.addEventListener('DOMContentLoaded', () => {
-  const el = document.getElementById('summaryOverlay');
-  if(el) el.addEventListener('click', (e) => { if(e.target.id === 'summaryOverlay') closeSummary(); });
-});
-
-function changeSummaryMonth(delta){
-  summaryMonth += delta;
-  if(summaryMonth > 12){ summaryMonth = 1; summaryYear++; }
-  if(summaryMonth < 1){ summaryMonth = 12; summaryYear--; }
-  loadSummary();
-}
-
-function summaryExpected(row){
-  const rent = Number(row.current_rent) || 0;
-  const rate = Number(row.tax_rate) || 0;
-  return +(rent + rent * rate / 100).toFixed(2);
-}
-
-async function loadSummary(){
-  const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-  document.getElementById('summaryMonthLabel').textContent = `${monthNames[summaryMonth-1]} ${summaryYear}`;
-  document.getElementById('summaryRows').innerHTML = '<div class="settings-hint">Loading…</div>';
-  try {
-    const res = await fetch(`${PAYMENTS_API}?year=${summaryYear}&month=${summaryMonth}`);
-    summaryRowsData = await res.json();
-    renderSummaryModal();
-  } catch(err) {
-    document.getElementById('summaryRows').innerHTML = '<div class="settings-hint">Could not load the summary.</div>';
-  }
-}
-
-function renderSummaryModal(){
-  let expected = 0, paid = 0;
-  document.getElementById('summaryRows').innerHTML = summaryRowsData.map(row => {
-    const exp = summaryExpected(row);
-    const pd = Number(row.paid_amount) || 0;
-    expected += exp; paid += pd;
-    const isPaid = pd >= exp && exp > 0;
-    const updated = row.updated_at ? `Updated ${fmtDate(row.updated_at)}${row.updated_by ? ' — ' + row.updated_by : ''}` : 'Not yet marked';
-    return `<div class="summary-row">
-      <div class="summary-row-top">
-        <div>
-          <div class="prop-name" style="font-size:13px;">${row.property_name}</div>
-          <div class="date-label">${updated}</div>
-        </div>
-        <div style="text-align:right;">
-          <span class="pill ${isPaid ? 'pill-ok' : 'pill-danger'}">${isPaid ? 'Paid' : 'Not paid'}</span>
-        </div>
-      </div>
-      <div class="summary-pay-line">
-        <span class="summary-amt-wrap"><span class="cur">€</span><input type="number" value="${pd}" onchange="setSummaryPaid(${row.id}, this.value)"></span>
-        <span class="date-label" style="margin-top:0;">of €${exp.toFixed(2)}</span>
-        ${!isPaid
-          ? `<span class="mark-paid-link" onclick="setSummaryPaid(${row.id}, ${exp})">Mark fully paid</span>`
-          : `<span class="mark-paid-link undo" onclick="setSummaryPaid(${row.id}, 0)">Mark as not paid</span>`}
-      </div>
-    </div>`;
-  }).join('') || '<div class="settings-hint">No properties yet.</div>';
-
-  document.getElementById('sumExpected').textContent = '€' + expected.toFixed(2);
-  document.getElementById('sumPaid').textContent = '€' + paid.toFixed(2);
-  document.getElementById('sumOutstanding').textContent = '€' + (expected - paid).toFixed(2);
-
-  renderPrintArea(expected, paid);
-  renderRecap(expected, paid);
-}
-
-function renderRecap(expected, paid){
-  const unpaid = summaryRowsData.filter(row => (Number(row.paid_amount) || 0) < summaryExpected(row));
-  const unpaidTotal = unpaid.reduce((s, row) => s + (summaryExpected(row) - (Number(row.paid_amount) || 0)), 0);
-  document.getElementById('summaryRecap').innerHTML = unpaid.length
-    ? `<div class="recap-box">
-         <div class="recap-title unpaid">Not yet paid (${unpaid.length}) — €${unpaidTotal.toFixed(2)} total outstanding</div>
-         ${unpaid.map(row => `<div class="recap-row"><span>${row.property_name}${row.contact_name ? ' — ' + row.contact_name : ''}</span><span>€${(summaryExpected(row) - (Number(row.paid_amount) || 0)).toFixed(2)} missing</span></div>`).join('')}
-       </div>`
-    : `<div class="recap-box"><div class="recap-title ok">Everyone has paid in full ✓</div></div>`;
-}
-
-function renderPrintArea(expected, paid){
-  const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-  const monthLabel = `${monthNames[summaryMonth-1]} ${summaryYear}`;
-  const today = new Date().toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'});
-
-  const bodyRows = summaryRowsData.map(row => {
-    const exp = summaryExpected(row);
-    const pd = Number(row.paid_amount) || 0;
-    return `<tr><td>${row.property_name}</td><td>€${exp.toFixed(2)}</td><td>€${pd.toFixed(2)}</td></tr>`;
-  }).join('');
-
-  const unpaid = summaryRowsData.filter(row => (Number(row.paid_amount) || 0) < summaryExpected(row));
-  const unpaidTotal = unpaid.reduce((s, row) => s + (summaryExpected(row) - (Number(row.paid_amount) || 0)), 0);
-  const unpaidHtml = unpaid.length
-    ? `<div class="print-unpaid-title">Not yet paid (${unpaid.length}) — €${unpaidTotal.toFixed(2)} total outstanding</div>
-       <table><thead><tr><th>Property</th><th>Missing</th></tr></thead><tbody>${
-         unpaid.map(row => `<tr><td>${row.property_name} — ${row.contact_name || ''}</td><td>€${(summaryExpected(row) - (Number(row.paid_amount) || 0)).toFixed(2)}</td></tr>`).join('')
-       }</tbody></table>`
-    : `<div class="print-unpaid-title" style="color:var(--ok);">Everyone has paid in full ✓</div>`;
-
-  document.getElementById('printArea').innerHTML = `
-    <h1>Ficus Investments — Monthly Rent Summary</h1>
-    <div class="print-sub">${monthLabel} · generated ${today}</div>
-    <table>
-      <thead><tr><th>Property</th><th>Expected</th><th>Paid</th></tr></thead>
-      <tbody>${bodyRows}</tbody>
-      <tfoot><tr class="print-total"><td>Total</td><td>€${expected.toFixed(2)}</td><td>€${paid.toFixed(2)}</td></tr></tfoot>
-    </table>
-    ${unpaidHtml}
-  `;
-}
-
-function emailSummaryPlaceholder(){
-  alert("Email sending isn't built yet — this button is a placeholder for now. Use Print or Export to Excel in the meantime.");
-}
-
-function exportSummaryCSV(){
-  const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-  const rows = [['Property','Contact','Expected','Paid','Status']];
-  summaryRowsData.forEach(row => {
-    const exp = summaryExpected(row);
-    const pd = Number(row.paid_amount) || 0;
-    rows.push([row.property_name, row.contact_name || '', exp.toFixed(2), pd.toFixed(2), pd >= exp && exp > 0 ? 'Paid' : 'Not paid']);
-  });
-  const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\r\n');
-  const blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `ficus-summary-${summaryYear}-${String(summaryMonth).padStart(2,'0')}.csv`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
-
-async function setSummaryPaid(propertyId, amount){
-  try {
-    await fetch(PAYMENTS_API, {
-      method: 'PUT', headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ property_id: propertyId, year: summaryYear, month: summaryMonth, paid_amount: Number(amount) || 0, updated_by: currentUserEmail })
-    });
-    await loadSummary();
-  } catch(err) {
-    alert('Could not save this — please try again.');
-  }
-}
-
 function openAddUser(){
   document.getElementById('newUserEmail').value = '';
   document.getElementById('newUserRole').value = 'member';
@@ -1150,7 +911,6 @@ async function initAuth(){
   const status = await res.json();
 
   if (status.authenticated) {
-    currentUserEmail = status.email;
     document.getElementById('authScreen').style.display = 'none';
     document.getElementById('appContent').style.display = 'block';
     load();
