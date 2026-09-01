@@ -395,11 +395,13 @@ tbody tr:hover{background:#F0EDFB;}
         </div>
         <div class="field">
           <label>Next payment date</label>
-         <input type="date" id="next_payment_date" required>
+         <input type="date" id="next_payment_date" required oninput="updateDateConfirm('next_payment_date')">
+         <div class="date-label" id="next_payment_date_confirm" style="font-weight:600;"></div>
         </div>
         <div class="field">
           <label>Rent change date</label>
-          <input type="date" id="rent_change_date">
+          <input type="date" id="rent_change_date" oninput="updateDateConfirm('rent_change_date')">
+          <div class="date-label" id="rent_change_date_confirm" style="font-weight:600;"></div>
         </div>
         <div class="field">
           <label>New rent amount (€)</label>
@@ -420,7 +422,8 @@ tbody tr:hover{background:#F0EDFB;}
         </div>
         <div class="field">
           <label>Lease expiry date</label>
-          <input type="date" id="lease_expiry_date">
+          <input type="date" id="lease_expiry_date" oninput="updateDateConfirm('lease_expiry_date')">
+          <div class="date-label" id="lease_expiry_date_confirm" style="font-weight:600;"></div>
         </div>
         <div class="field">
           <label>Rent due day (of month)</label>
@@ -516,8 +519,17 @@ function fmtDate(dateStr){
 function daysUntil(dateStr){
   if(!dateStr) return null;
   const today = new Date(); today.setHours(0,0,0,0);
-  const d = new Date(dateStr); d.setHours(0,0,0,0);
+  const d = new Date(String(dateStr).slice(0,10) + 'T00:00:00'); d.setHours(0,0,0,0);
   return Math.round((d - today) / 86400000);
+}
+
+function updateDateConfirm(fieldId){
+  const input = document.getElementById(fieldId);
+  const confirmEl = document.getElementById(fieldId + '_confirm');
+  if(!input || !confirmEl) return;
+  if(!input.value){ confirmEl.textContent = ''; return; }
+  const d = new Date(input.value + 'T00:00:00');
+  confirmEl.textContent = '→ ' + d.toLocaleDateString('en-GB', {weekday:'short', day:'numeric', month:'short', year:'numeric'});
 }
 
 function taxLabel(p){
@@ -645,6 +657,7 @@ function openModal(){
   document.getElementById('propId').value = '';
   document.getElementById('tax_type').value = 'stamp';
   document.getElementById('tax_rate').value = 3.6;
+  ['next_payment_date','rent_change_date','lease_expiry_date'].forEach(updateDateConfirm);
   document.getElementById('deleteFromModalBtn').style.display = 'none';
   document.getElementById('overlay').classList.add('open');
 }
@@ -674,6 +687,7 @@ function editProp(id){
   document.getElementById('due_day').value = p.due_day ?? '';
   document.getElementById('lease_auto_renew').checked = !!p.lease_auto_renew;
   document.getElementById('notes').value = p.notes || '';
+  ['next_payment_date','rent_change_date','lease_expiry_date'].forEach(updateDateConfirm);
   document.getElementById('deleteFromModalBtn').style.display = 'inline-block';
   document.getElementById('overlay').classList.add('open');
 }
