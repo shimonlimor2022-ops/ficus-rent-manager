@@ -339,7 +339,7 @@ tbody tr:hover{background:#F0EDFB;}
       <thead>
         <tr>
           <th>Property</th>
-          <th class="hide-mobile">Contact</th>
+          <th class="hide-mobile">Tenant</th>
           <th>Current rent</th>
           <th>Tax</th>
           <th>Total</th>
@@ -377,17 +377,17 @@ tbody tr:hover{background:#F0EDFB;}
           <input type="text" id="address" placeholder="Street, city">
         </div>
 
-        <div class="section-divider">Contact person</div>
+        <div class="section-divider">Tenant details</div>
         <div class="field">
-          <label>Name</label>
+          <label>Tenant name</label>
           <input type="text" id="contact_name">
         </div>
         <div class="field">
-          <label>Phone</label>
+          <label>Tenant phone</label>
           <input type="text" id="contact_phone" placeholder="+30...">
         </div>
         <div class="field full">
-          <label>Contact email</label>
+          <label>Tenant email</label>
           <input type="email" id="contact_email">
         </div>
 
@@ -679,7 +679,7 @@ function render(){
       return `
       <tr onclick="editProp(${p.id})" style="cursor:pointer;">
         <td data-label="Property"><div class="prop-name">${p.property_name}</div><div class="prop-addr">${p.address || ''}</div></td>
-        <td data-label="Contact" class="hide-mobile">
+        <td data-label="Tenant" class="hide-mobile">
           <div class="contact-name">${p.contact_name || '—'}</div>
           ${p.contact_phone ? `<div class="contact-sub">${p.contact_phone}</div>` : ''}
           ${p.contact_email ? `<div class="contact-sub">${p.contact_email}</div>` : ''}
