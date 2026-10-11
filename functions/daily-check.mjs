@@ -3,17 +3,28 @@ import { Resend } from 'resend';
 const sql = neon();
 const resend = new Resend(process.env.RESEND_API_KEY);
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL; // must be on a domain verified in Resend
+const APP_URL = process.env.URL || 'https://ornate-trifle-4d0713.netlify.app';
 
-function paymentEmailHtml(p) {
+function openAppButton() {
+  return `<p style="margin:22px 0 6px;"><a href="${APP_URL}" style="display:inline-block;background:#111008;color:#ffffff;text-decoration:none;padding:11px 20px;border-radius:8px;font-size:14px;">Open the app</a></p>
+    <p style="color:#6B6560;font-size:12px;margin:6px 0 0;">Or open: <a href="${APP_URL}" style="color:#6B6560;">${APP_URL}</a></p>`;
+}
+function paymentEmailHtml(p, expected, count) {
+  const amount = expected === null ? '—' : '€' + expected.toFixed(2);
+  const extra = count > 1 ? `<p style="color:#6B6560;">${count} payment periods were opened (some earlier dates were missed).</p>` : '';
   return `<div style="font-family:Arial,sans-serif;font-size:15px;line-height:1.6;color:#111008">
-    <p>Reminder: <b>${p.property_name}</b> is due for a rent payment of <b>€${p.current_rent ?? '—'}</b> today.</p>
-    <p style="color:#6B6560;">Please confirm the payment was received from ${p.contact_name || 'the tenant'}${p.contact_phone ? ' (' + p.contact_phone + ')' : ''}.</p>
+    <p>Rent payment due: <b>${p.property_name}</b> — <b>${amount}</b> (including tax).</p>
+    <p style="color:#6B6560;">Tenant: ${p.contact_name || '—'}${p.contact_phone ? ' (' + p.contact_phone + ')' : ''}</p>
+    <p>The payment now appears in <b>Open payments</b> and will stay there until you mark it as paid or unpaid.</p>
+    ${extra}
+    ${openAppButton()}
   </div>`;
 }
 function rentChangeEmailHtml(p) {
   return `<div style="font-family:Arial,sans-serif;font-size:15px;line-height:1.6;color:#111008">
     <p>Reminder: the rent for <b>${p.property_name}</b> has changed to <b>€${p.new_rent_amount}</b>, effective today.</p>
     <p style="color:#6B6560;">Previous rent was €${p.current_rent ?? '—'}.</p>
+    ${openAppButton()}
   </div>`;
 }
 function leaseExpiryEmailHtml(p, dateStr) {
@@ -21,7 +32,14 @@ function leaseExpiryEmailHtml(p, dateStr) {
   const address = p.address || p.property_name;
   return `<div style="font-family:Arial,sans-serif;font-size:15px;line-height:1.6;color:#111008">
     <p>The lease agreement for client ${client}, for the property at address ${address}, is set to expire on ${dateStr}.</p>
+    ${openAppButton()}
   </div>`;
+}
+function expectedTotal(p) {
+  if (p.current_rent === null || p.current_rent === undefined) return null;
+  const rent = Number(p.current_rent);
+  const rate = Number(p.tax_rate ?? (p.tax_type === 'vat' ? 24 : 3.6));
+  return +(rent + (rent * rate) / 100).toFixed(2);
 }
 
 export default async () => {
@@ -31,35 +49,70 @@ export default async () => {
   }
   const [settingsRow] = await sql`SELECT notification_emails FROM settings WHERE id = 1`;
   const recipients = settingsRow?.notification_emails || [];
-  const results = { paymentReminders: 0, rentChanges: 0, leaseExpiry3mo: 0, leaseExpiry1wk: 0, errors: [] };
+  const results = { paymentPeriodsOpened: 0, paymentEmails: 0, rentChanges: 0, leaseExpiry3mo: 0, leaseExpiry1wk: 0, errors: [] };
+
+  // 1) Open payment periods (only for properties with payment tracking ON).
+  //    This part does not need email recipients, so it always runs.
+  try {
+    const dueProps = await sql`
+      SELECT * FROM properties
+      WHERE track_payments = true
+        AND next_payment_date IS NOT NULL
+        AND next_payment_date <= CURRENT_DATE
+    `;
+    for (const p of dueProps) {
+      const expected = expectedTotal(p);
+      let created = 0;
+      for (let i = 0; i < 24; i++) {
+        const [row] = await sql`
+          SELECT to_char(next_payment_date, 'YYYY-MM-DD') AS d,
+                 (next_payment_date <= CURRENT_DATE) AS due
+          FROM properties WHERE id = ${p.id}
+        `;
+        if (!row || !row.d || !row.due) break;
+        const inserted = await sql`
+          INSERT INTO rent_periods (property_id, due_date, expected_amount, status)
+          VALUES (${p.id}, ${row.d}, ${expected}, 'open')
+          ON CONFLICT (property_id, due_date) DO NOTHING
+          RETURNING id
+        `;
+        if (inserted.length > 0) created++;
+        await sql`
+          UPDATE properties SET
+            next_payment_date = next_payment_date + INTERVAL '1 month',
+            last_payment_alert_sent = CURRENT_DATE
+          WHERE id = ${p.id}
+        `;
+      }
+      results.paymentPeriodsOpened += created;
+      if (created > 0 && recipients.length > 0) {
+        try {
+          await resend.emails.send({
+            from: FROM_EMAIL,
+            to: recipients,
+            subject: `Rent payment due — ${p.property_name}`,
+            html: paymentEmailHtml(p, expected, created),
+          });
+          results.paymentEmails++;
+        } catch (e) {
+          console.error(e);
+          results.errors.push(e.message);
+        }
+      }
+    }
+  } catch (err) {
+    console.error(err);
+    results.errors.push(err.message);
+  }
+
   if (recipients.length === 0) {
     console.warn('No notification_emails configured in settings — no alerts will be sent.');
     return new Response(JSON.stringify({ ...results, warning: 'no recipients configured' }), {
       headers: { 'Content-Type': 'application/json' },
     });
   }
-  try {
-    const paymentsDue = await sql`
-      SELECT * FROM properties
-      WHERE next_payment_date = CURRENT_DATE
-        AND (last_payment_alert_sent IS DISTINCT FROM CURRENT_DATE)
-    `;
-    for (const p of paymentsDue) {
-      await resend.emails.send({
-        from: FROM_EMAIL,
-        to: recipients,
-        subject: `Rent payment due today — ${p.property_name}`,
-        html: paymentEmailHtml(p),
-      });
-      await sql`
-        UPDATE properties SET
-          last_payment_alert_sent = CURRENT_DATE,
-          next_payment_date = next_payment_date + INTERVAL '1 month'
-        WHERE id = ${p.id}
-      `;
-      results.paymentReminders++;
-    }
 
+  try {
     const rentChanges = await sql`
       SELECT * FROM properties
       WHERE rent_change_date = CURRENT_DATE
