@@ -154,11 +154,59 @@
     '</div>';
   }
 
+  function defaultExpected() {
+    try {
+      if (typeof properties !== 'undefined' && typeof totalWithTax === 'function') {
+        var pr = properties.find(function (x) { return x.id === curPropId; });
+        var t = pr ? totalWithTax(pr) : null;
+        return t === null || t === undefined ? '' : t;
+      }
+    } catch (err) {}
+    return '';
+  }
+  function ppToggle() {
+    var unpaid = document.getElementById('ppStatus').value === 'unpaid';
+    document.getElementById('ppPayFields').style.display = unpaid ? 'none' : 'flex';
+  }
+
   async function onAction(e) {
     var btn = e.target.closest('[data-act]');
     if (!btn) return;
     var cardEl = btn.closest('.pay-card');
     var act = btn.getAttribute('data-act');
+    if (act === 'pp-open') {
+      var f = document.getElementById('ppForm');
+      f.classList.add('show');
+      document.getElementById('ppDue').value = '';
+      document.getElementById('ppStatus').value = 'paid';
+      document.getElementById('ppDate').value = todayIso();
+      document.getElementById('ppExpected').value = defaultExpected();
+      document.getElementById('ppAmount').value = defaultExpected();
+      ppToggle();
+      return;
+    }
+    if (act === 'pp-cancel') { document.getElementById('ppForm').classList.remove('show'); return; }
+    if (act === 'pp-save') {
+      var due = document.getElementById('ppDue').value;
+      var st = document.getElementById('ppStatus').value;
+      var exp = document.getElementById('ppExpected').value;
+      var pdate = document.getElementById('ppDate').value;
+      var pamt = Number(document.getElementById('ppAmount').value);
+      if (!due) { alert('Please choose the payment due date.'); return; }
+      if (st !== 'unpaid') {
+        if (!pdate) { alert('Please choose the date the payment was made.'); return; }
+        if (!(pamt > 0)) { alert('Please enter the amount paid.'); return; }
+      }
+      try {
+        await post({
+          action: 'create_period', property_id: curPropId, due_date: due, status: st,
+          expected_amount: exp === '' ? null : Number(exp),
+          paid_date: st === 'unpaid' ? null : pdate, amount: st === 'unpaid' ? null : pamt
+        });
+        await refreshAll();
+      } catch (err) { alert(err.message || 'Something went wrong.'); }
+      return;
+    }
     var pid = cardEl ? Number(cardEl.getAttribute('data-pid')) : null;
     try {
       if (act === 'add') {
@@ -288,13 +336,28 @@
     if (!box) return;
     if (!propId) { box.innerHTML = ''; return; }
     box.innerHTML = '<div class="pay-empty">Loading…</div>';
+    var head =
+      '<div style="margin-bottom:12px;"><button type="button" class="pay-btn" data-act="pp-open">+ Add past payment</button></div>' +
+      '<div class="pay-add" id="ppForm">' +
+        '<div><label>Payment due date</label><input type="date" id="ppDue"></div>' +
+        '<div><label>Expected (€)</label><input type="number" step="0.01" min="0" id="ppExpected"></div>' +
+        '<div><label>Status</label><select id="ppStatus" style="font-family:Inter,sans-serif;border:1px solid var(--border);border-radius:8px;padding:8px 9px;font-size:13.5px;background:#fff;width:140px;">' +
+          '<option value="paid">Paid</option><option value="partial">Partially paid</option><option value="unpaid">Not paid</option></select></div>' +
+        '<div id="ppPayFields" style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;">' +
+          '<div><label>Date paid</label><input type="date" id="ppDate"></div>' +
+          '<div><label>Amount paid (€)</label><input type="number" step="0.01" min="0" id="ppAmount"></div>' +
+        '</div>' +
+        '<button type="button" class="pay-btn ok" data-act="pp-save">Save</button>' +
+        '<button type="button" class="pay-btn" data-act="pp-cancel">Cancel</button>' +
+      '</div>';
     try {
       var rows = await api(API + '?view=history&property_id=' + encodeURIComponent(propId));
-      box.innerHTML = rows.length
+      box.innerHTML = head + (rows.length
         ? rows.map(function (p) { return card(p, false); }).join('')
-        : '<div class="pay-empty">No payments yet. Payments appear here once a due date arrives (with "Track rent payments" turned on for this property).</div>';
+        : '<div class="pay-empty">No payments yet. Payments appear here once a due date arrives (with "Track rent payments" turned on), or add a past payment above.</div>');
+      document.getElementById('ppStatus').addEventListener('change', ppToggle);
     } catch (err) {
-      box.innerHTML = '<div class="pay-empty">Could not load the history.</div>';
+      box.innerHTML = head + '<div class="pay-empty">Could not load the history.</div>';
     }
   }
   window.loadPropertyHistory = loadPropertyHistory;
