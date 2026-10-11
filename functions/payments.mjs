@@ -2,8 +2,6 @@ import { neon } from '@netlify/neon';
 import { isAuthenticated, getSessionUser, json } from '../lib/auth.mjs';
 const sql = neon();
 
-const PERIOD_SELECT = `p.id`;
-
 async function recompute(periodId) {
   const [p] = await sql`SELECT * FROM rent_periods WHERE id = ${periodId}`;
   if (!p) return;
@@ -98,6 +96,52 @@ export default async (req) => {
     if (req.method === 'POST') {
       const b = await req.json();
       const action = b.action;
+
+      if (action === 'create_period') {
+        if (!b.property_id) return json({ error: 'missing property_id' }, 400);
+        if (!b.due_date) return json({ error: 'missing due_date' }, 400);
+        const status = ['paid', 'partial', 'unpaid'].includes(b.status) ? b.status : 'partial';
+        const amount = Number(b.amount);
+        if (status !== 'unpaid') {
+          if (!b.paid_date) return json({ error: 'missing paid_date' }, 400);
+          if (!(amount > 0)) return json({ error: 'amount must be greater than 0' }, 400);
+        }
+        const expected = b.expected_amount === null || b.expected_amount === undefined || b.expected_amount === ''
+          ? null : Number(b.expected_amount);
+        const [prop] = await sql`SELECT id FROM properties WHERE id = ${b.property_id}`;
+        if (!prop) return json({ error: 'property not found' }, 404);
+        const inserted = await sql`
+          INSERT INTO rent_periods (property_id, due_date, expected_amount, status)
+          VALUES (${b.property_id}, ${b.due_date}, ${expected}, 'open')
+          ON CONFLICT (property_id, due_date) DO NOTHING
+          RETURNING id
+        `;
+        if (inserted.length === 0) {
+          return json({ error: 'A payment for this due date already exists for this property.' }, 409);
+        }
+        const periodId = inserted[0].id;
+        if (status === 'unpaid') {
+          await sql`
+            UPDATE rent_periods
+            SET status = 'unpaid', resolved_at = now(), resolved_by = ${who}
+            WHERE id = ${periodId}
+          `;
+          return json({ ok: true });
+        }
+        await sql`
+          INSERT INTO rent_payment_entries (period_id, property_id, paid_date, amount, note, created_by)
+          VALUES (${periodId}, ${b.property_id}, ${b.paid_date}, ${amount}, 'Added manually', ${who})
+        `;
+        await recompute(periodId);
+        if (status === 'paid') {
+          await sql`
+            UPDATE rent_periods
+            SET status = 'paid', resolved_at = now(), resolved_by = ${who}
+            WHERE id = ${periodId}
+          `;
+        }
+        return json({ ok: true });
+      }
 
       if (action === 'add_entry') {
         const amount = Number(b.amount);
