@@ -1,9 +1,14 @@
 {
+  "id": "/",
   "name": "Ficus Investments — Rent Management",
   "short_name": "Ficus Rent",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
+  "handle_links": "preferred",
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  },
   "background_color": "#EFECEA",
   "theme_color": "#111008",
   "orientation": "portrait-primary",
