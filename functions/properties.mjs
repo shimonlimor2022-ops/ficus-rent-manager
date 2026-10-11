@@ -29,7 +29,8 @@ export default async (req) => {
           rent_change_date, new_rent_amount,
           notes,
           tax_type, tax_rate,
-          lease_expiry_date, lease_auto_renew, due_day
+          lease_expiry_date, lease_auto_renew, due_day,
+          track_payments
         ) VALUES (
           ${b.property_name}, ${b.address || null},
           ${b.contact_name || null}, ${b.contact_phone || null}, ${b.contact_email || null},
@@ -37,7 +38,8 @@ export default async (req) => {
           ${b.rent_change_date || null}, ${b.new_rent_amount || null},
           ${b.notes || null},
           ${taxType}, ${b.tax_rate || null},
-          ${b.lease_expiry_date || null}, ${!!b.lease_auto_renew}, ${b.due_day || null}
+          ${b.lease_expiry_date || null}, ${!!b.lease_auto_renew}, ${b.due_day || null},
+          ${!!b.track_payments}
         )
         RETURNING *
       `;
@@ -64,7 +66,8 @@ export default async (req) => {
           tax_rate = ${b.tax_rate || null},
           lease_expiry_date = ${b.lease_expiry_date || null},
           lease_auto_renew = ${!!b.lease_auto_renew},
-          due_day = ${b.due_day || null}
+          due_day = ${b.due_day || null},
+          track_payments = ${!!b.track_payments}
         WHERE id = ${b.id}
         RETURNING *
       `;
