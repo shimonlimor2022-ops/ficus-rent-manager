@@ -77,7 +77,7 @@ export default async () => {
       `;
     }
 
-        await sql`
+    await sql`
       ALTER TABLE properties
         ADD COLUMN IF NOT EXISTS tax_type TEXT DEFAULT 'stamp',
         ADD COLUMN IF NOT EXISTS tax_rate NUMERIC(5,2) DEFAULT 3.6,
@@ -88,6 +88,7 @@ export default async () => {
         ADD COLUMN IF NOT EXISTS alert_1wk_sent BOOLEAN DEFAULT false
     `;
 
+    // Old table - kept untouched (contains old test data, not used anymore)
     await sql`
       CREATE TABLE IF NOT EXISTS property_payments (
         id SERIAL PRIMARY KEY,
@@ -99,8 +100,45 @@ export default async () => {
         updated_by TEXT,
         UNIQUE(property_id, year, month)
       )
-    `;return new Response(
-      'Success! Tables are ready, including last_login tracking.',
+    `;
+
+    // NEW: payment tracking flag per property
+    await sql`
+      ALTER TABLE properties
+        ADD COLUMN IF NOT EXISTS track_payments BOOLEAN DEFAULT false
+    `;
+
+    // NEW: one row per payment due date
+    await sql`
+      CREATE TABLE IF NOT EXISTS rent_periods (
+        id SERIAL PRIMARY KEY,
+        property_id INTEGER NOT NULL REFERENCES properties(id) ON DELETE CASCADE,
+        due_date DATE NOT NULL,
+        expected_amount NUMERIC(10,2),
+        status TEXT NOT NULL DEFAULT 'open',
+        resolved_at TIMESTAMP,
+        resolved_by TEXT,
+        created_at TIMESTAMP DEFAULT now(),
+        UNIQUE(property_id, due_date)
+      )
+    `;
+
+    // NEW: many payment entries per period (date + amount)
+    await sql`
+      CREATE TABLE IF NOT EXISTS rent_payment_entries (
+        id SERIAL PRIMARY KEY,
+        period_id INTEGER NOT NULL REFERENCES rent_periods(id) ON DELETE CASCADE,
+        property_id INTEGER NOT NULL REFERENCES properties(id) ON DELETE CASCADE,
+        paid_date DATE NOT NULL,
+        amount NUMERIC(10,2) NOT NULL,
+        note TEXT,
+        created_by TEXT,
+        created_at TIMESTAMP DEFAULT now()
+      )
+    `;
+
+    return new Response(
+      'Success! Tables are ready, including payment tracking.',
       { headers: { 'Content-Type': 'text/plain' } }
     );
   } catch (err) {
