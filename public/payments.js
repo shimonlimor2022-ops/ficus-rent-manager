@@ -70,6 +70,24 @@
     '.prop-tabs{display:none;gap:6px;margin-bottom:16px;border-bottom:1px solid var(--border);}',
     '.prop-tab{border:none;background:none;padding:9px 14px;font-size:13.5px;font-family:Inter,sans-serif;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;}',
     '.prop-tab.active{color:var(--text);font-weight:600;border-bottom-color:var(--text);}',
+    '.sum-nav{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:14px;}',
+    '.sum-nav button{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:#fff;cursor:pointer;color:var(--muted);font-size:16px;}',
+    '.sum-label{font-family:Outfit,sans-serif;font-weight:600;font-size:15px;min-width:150px;text-align:center;}',
+    '.sum-cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px;}',
+    '@media(max-width:560px){.sum-cards{grid-template-columns:1fr;}}',
+    '.sum-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 13px;}',
+    '.sum-card .l{font-size:10.5px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.02em;}',
+    '.sum-card .v{font-family:Outfit,sans-serif;font-size:20px;font-weight:700;margin-top:4px;}',
+    '.sum-card.ok .v{color:var(--ok);}',
+    '.sum-card.bad{background:#111008;border-color:#111008;cursor:pointer;}',
+    '.sum-card.bad .l{color:#F0958A;}',
+    '.sum-card.bad .v{color:#F6B8AE;}',
+    '.sum-tip{display:none;background:#111008;border-radius:12px;padding:14px 16px;margin-bottom:14px;}',
+    '.sum-tip.show{display:block;}',
+    '.sum-tip .t{color:#F0958A;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;margin-bottom:8px;}',
+    '.sum-tip .r{display:flex;justify-content:space-between;gap:10px;font-size:12.5px;color:#EFECEA;padding:7px 0;border-top:1px solid #2A281F;}',
+    '.sum-tip .r:first-of-type{border-top:none;}',
+    '.sum-export{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 4px;}',
     '.pay-badge{display:inline-block;min-width:18px;padding:1px 6px;border-radius:99px;background:var(--danger);color:#fff;font-size:11px;font-weight:700;text-align:center;}'
   ].join('\n');
   document.head.appendChild(css);
@@ -97,6 +115,27 @@
       '<div class="hist-sum" id="histSum"></div>' +
       '<div id="histList"></div>' +
       '<div class="modal-actions"><button type="button" class="btn-secondary" onclick="closeHistory()">Close</button></div>' +
+    '</div></div>' +
+    '<div class="overlay" id="sumOverlay"><div class="modal" style="max-width:720px;">' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px;">' +
+        '<h2 style="margin-bottom:0;">Monthly summary</h2>' +
+        '<div style="display:flex;gap:6px;">' +
+          '<button type="button" class="icon-round-btn" id="sumPrint" title="Print" aria-label="Print">'+ '<svg width="16" height="16" viewBox="0 0 90 90"><path d="M 82.316 20.766 H 69.021 V 7.764 c 0 -2.664 -2.167 -4.831 -4.831 -4.831 H 25.811 c -2.664 0 -4.831 2.167 -4.831 4.831 v 13.002 H 7.683 C 3.447 20.766 0 24.213 0 28.449 v 34.511 c 0 4.236 3.447 7.683 7.683 7.683 h 13.296 v 11.593 c 0 2.664 2.167 4.831 4.831 4.831 h 38.379 c 2.664 0 4.831 -2.167 4.831 -4.831 V 70.643 h 13.296 c 4.236 0 7.684 -3.446 7.684 -7.683 V 28.449 C 90 24.213 86.553 20.766 82.316 20.766 z M 22.979 7.764 c 0 -1.561 1.27 -2.831 2.831 -2.831 h 38.379 c 1.562 0 2.831 1.27 2.831 2.831 v 13.002 H 22.979 V 7.764 z M 67.021 82.236 c 0 1.562 -1.27 2.831 -2.831 2.831 H 25.811 c -1.561 0 -2.831 -1.27 -2.831 -2.831 V 55.953 h 44.041 V 82.236 z M 67 30.628 c -0.828 0 -1.5 -0.672 -1.5 -1.5 s 0.672 -1.5 1.5 -1.5 s 1.5 0.672 1.5 1.5 S 67.828 30.628 67 30.628 z M 74 30.628 c -0.828 0 -1.5 -0.672 -1.5 -1.5 s 0.672 -1.5 1.5 -1.5 s 1.5 0.672 1.5 1.5 S 74.828 30.628 74 30.628 z M 81 30.628 c -0.828 0 -1.5 -0.672 -1.5 -1.5 s 0.672 -1.5 1.5 -1.5 s 1.5 0.672 1.5 1.5 S 81.828 30.628 81 30.628 z" fill="currentColor"/><path d="M 59.705 65.953 h -30 c -0.552 0 -1 -0.447 -1 -1 s 0.448 -1 1 -1 h 30 c 0.553 0 1 0.447 1 1 S 60.258 65.953 59.705 65.953 z" fill="currentColor"/><path d="M 59.705 75.953 h -30 c -0.552 0 -1 -0.447 -1 -1 s 0.448 -1 1 -1 h 30 c 0.553 0 1 0.447 1 1 S 60.258 75.953 59.705 75.953 z" fill="currentColor"/></svg></button>' +
+          '<button type="button" class="icon-round-btn" id="sumExcel" title="Export to Excel" aria-label="Export to Excel">'+ '<svg width="16" height="16" viewBox="0 0 90 90"><path d="M 80.959 78.79 H 19.13 c -1.588 0 -2.876 -1.288 -2.876 -2.876 V 14.085 c 0 -1.588 1.288 -2.876 2.876 -2.876 h 61.829 c 1.588 0 2.876 1.288 2.876 2.876 v 61.829 C 83.835 77.503 82.547 78.79 80.959 78.79 z" fill="rgb(255,255,255)"/><path d="M 80.959 80.79 H 19.13 c -2.688 0 -4.876 -2.187 -4.876 -4.875 v -61.83 c 0 -2.688 2.188 -4.876 4.876 -4.876 h 61.829 c 2.688 0 4.876 2.188 4.876 4.876 v 61.83 C 85.835 78.604 83.647 80.79 80.959 80.79 z M 19.13 13.209 c -0.483 0 -0.876 0.393 -0.876 0.876 v 61.83 c 0 0.482 0.393 0.875 0.876 0.875 h 61.829 c 0.483 0 0.876 -0.393 0.876 -0.875 v -61.83 c 0 -0.483 -0.393 -0.876 -0.876 -0.876 H 19.13 z" fill="rgb(25,117,76)"/><rect x="61.05" y="20.47" width="15.93" height="4" fill="rgb(25,117,76)"/><rect x="61.05" y="31.74" width="15.93" height="4" fill="rgb(25,117,76)"/><rect x="61.05" y="43" width="15.93" height="4" fill="rgb(25,117,76)"/><rect x="61.05" y="54.26" width="15.93" height="4" fill="rgb(25,117,76)"/><rect x="61.05" y="65.53" width="15.93" height="4" fill="rgb(25,117,76)"/><rect x="39.76" y="20.47" width="15.93" height="4" fill="rgb(25,117,76)"/><rect x="39.76" y="31.74" width="15.93" height="4" fill="rgb(25,117,76)"/><rect x="39.76" y="43" width="15.93" height="4" fill="rgb(25,117,76)"/><rect x="39.76" y="54.26" width="15.93" height="4" fill="rgb(25,117,76)"/><rect x="39.76" y="65.53" width="15.93" height="4" fill="rgb(25,117,76)"/><polygon points="51.33,90 6.17,78.79 6.17,11.21 51.33,0" fill="rgb(25,117,76)"/><polygon points="38.15,28.21 31.01,28.62 26.67,37.72 22.56,29.1 15.8,29.48 23.2,45 15.8,60.52 22.56,60.9 26.67,52.28 31.01,61.38 38.15,61.79 30.14,45" fill="rgb(255,255,255)"/></svg></button>' +
+          '<button type="button" class="icon-round-btn" id="sumEmail" title="Email summary" aria-label="Email summary">'+ '<svg width="16" height="16" viewBox="0 0 90 90"><path d="M 81.055 84.001 H 8.945 C 4.013 84.001 0 79.988 0 75.056 V 30.34 c 0 -4.933 4.013 -8.945 8.945 -8.945 H 49.19 c 0.553 0 1 0.448 1 1 s -0.447 1 -1 1 H 8.945 C 5.116 23.395 2 26.511 2 30.34 v 44.715 c 0 3.83 3.116 6.945 6.945 6.945 h 72.109 c 3.83 0 6.945 -3.115 6.945 -6.945 V 42.671 c 0 -0.552 0.447 -1 1 -1 s 1 0.448 1 1 v 32.385 C 90 79.988 85.987 84.001 81.055 84.001 z" fill="currentColor"/><path d="M 44.797 61.203 c -1.531 0 -3.065 -0.549 -4.29 -1.655 l -29.433 -26.62 c -0.41 -0.371 -0.441 -1.003 -0.071 -1.413 c 0.37 -0.41 1.003 -0.441 1.413 -0.071 l 29.432 26.62 c 1.747 1.578 4.413 1.506 6.07 -0.166 l 13.65 -13.762 c 0.391 -0.393 1.022 -0.394 1.414 -0.006 c 0.393 0.389 0.395 1.022 0.006 1.414 l -13.65 13.762 C 48.089 60.567 46.444 61.203 44.797 61.203 z" fill="currentColor"/><path d="M 73.604 38.791 c -9.041 0 -16.396 -7.355 -16.396 -16.396 S 64.563 5.999 73.604 5.999 C 82.645 5.999 90 13.354 90 22.395 S 82.645 38.791 73.604 38.791 z M 73.604 7.999 c -7.938 0 -14.396 6.458 -14.396 14.396 s 6.458 14.396 14.396 14.396 C 81.542 36.791 88 30.333 88 22.395 S 81.542 7.999 73.604 7.999 z" fill="currentColor"/><path d="M 77.294 27.831 h -2.604 V 15.959 c 0 -0.396 -0.233 -0.754 -0.596 -0.915 c -0.361 -0.161 -0.784 -0.092 -1.077 0.175 l -3.775 3.433 c -0.408 0.372 -0.438 1.004 -0.067 1.413 c 0.372 0.41 1.006 0.438 1.413 0.067 l 2.103 -1.912 v 9.611 h -2.775 c -0.553 0 -1 0.448 -1 1 s 0.447 1 1 1 h 7.38 c 0.553 0 1 -0.448 1 -1 S 77.847 27.831 77.294 27.831 z" fill="currentColor"/></svg></button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="sum-nav"><button type="button" id="sumPrev" aria-label="Previous month">‹</button>' +
+        '<div class="sum-label" id="sumLabel"></div>' +
+        '<button type="button" id="sumNext" aria-label="Next month">›</button></div>' +
+      '<div class="sum-cards">' +
+        '<div class="sum-card"><div class="l">Opening balance</div><div class="v" id="sumOpen">€0</div></div>' +
+        '<div class="sum-card ok"><div class="l">Paid</div><div class="v" id="sumPaid">€0</div></div>' +
+        '<div class="sum-card bad" id="sumBad"><div class="l">Outstanding (tap for list)</div><div class="v" id="sumOut">€0</div></div>' +
+      '</div>' +
+      '<div class="sum-tip" id="sumTip"></div>' +
+      '<div id="sumList" style="margin-top:10px;"></div>' +
+      '<div class="modal-actions"><button type="button" class="btn-secondary" onclick="closeSummary()">Close</button></div>' +
     '</div></div>';
   while (wrap.firstChild) document.body.appendChild(wrap.firstChild);
 
@@ -384,11 +423,134 @@
     if (showHist) loadPropertyHistory(curPropId);
   };
 
+  /* ---------- monthly summary ---------- */
+  var sumDate = new Date();
+  var sumRows = [];
+  function sumRemaining(p) {
+    if (p.status === 'paid') return 0;
+    if (p.expected_amount === null || p.expected_amount === undefined) return 0;
+    return Math.max(0, num(p.expected_amount) - num(p.paid_total));
+  }
+  async function loadSummary() {
+    var y = sumDate.getFullYear();
+    var m = sumDate.getMonth() + 1;
+    document.getElementById('sumLabel').textContent = MONTHS[m - 1] + ' ' + y;
+    document.getElementById('sumTip').classList.remove('show');
+    var list = document.getElementById('sumList');
+    try {
+      sumRows = await api(API + '?view=history&month=' + m + '&year=' + y);
+    } catch (err) {
+      sumRows = [];
+      list.innerHTML = '<div class="pay-empty">Could not load the summary.</div>';
+      return;
+    }
+    var opening = 0, paid = 0, out = 0;
+    sumRows.forEach(function (p) {
+      opening += num(p.expected_amount);
+      paid += num(p.paid_total);
+      out += sumRemaining(p);
+    });
+    document.getElementById('sumOpen').textContent = money(opening);
+    document.getElementById('sumPaid').textContent = money(paid);
+    document.getElementById('sumOut').textContent = money(out);
+    list.innerHTML = sumRows.length
+      ? sumRows.map(function (p) { return card(p, true); }).join('')
+      : '<div class="pay-empty">No payments came due in this month.</div>';
+  }
+  function statusText(s) {
+    return { paid: 'Paid', partial: 'Partially paid', unpaid: 'Not paid', open: 'Open' }[s] || s;
+  }
+  function showSumTip() {
+    var tip = document.getElementById('sumTip');
+    var unpaid = sumRows.filter(function (p) { return sumRemaining(p) > 0 || p.status === 'unpaid' || p.status === 'open'; })
+      .filter(function (p) { return p.status !== 'paid'; });
+    var total = 0;
+    var html = unpaid.map(function (p) {
+      var r = sumRemaining(p);
+      total += r;
+      return '<div class="r"><span>' + esc(p.property_name) + ' · ' + esc(p.contact_name || '—') + '</span><b>' + money(r) + '</b></div>';
+    }).join('');
+    tip.innerHTML = '<div class="t">Not yet paid (' + unpaid.length + ') — ' + money(total) + ' outstanding</div>' +
+      (html || '<div class="r"><span>Everything is paid.</span></div>');
+    tip.classList.toggle('show');
+  }
+  function sumTitle() {
+    return MONTHS[sumDate.getMonth()] + ' ' + sumDate.getFullYear();
+  }
+  function sumPrint() {
+    var rows = sumRows.map(function (p) {
+      return '<tr><td>' + esc(p.property_name) + '</td><td>' + esc(p.contact_name || '') + '</td><td>' + dateTxt(p.due_date) +
+        '</td><td style="text-align:right">' + money(p.expected_amount) + '</td><td style="text-align:right">' + money(p.paid_total) +
+        '</td><td style="text-align:right">' + money(sumRemaining(p)) + '</td><td>' + statusText(p.status) + '</td></tr>';
+    }).join('');
+    var w = window.open('', '_blank');
+    if (!w) { alert('Please allow pop-ups to print.'); return; }
+    w.document.write('<html><head><title>Monthly summary - ' + sumTitle() + '</title><style>' +
+      'body{font-family:Arial,sans-serif;padding:24px;color:#111008}h1{font-size:20px;margin:0 0 4px}p{color:#6B6560;margin:0 0 16px;font-size:13px}' +
+      'table{border-collapse:collapse;width:100%;font-size:12.5px}th,td{border:1px solid #D6D0C8;padding:7px 9px;text-align:left}th{background:#EEF3F8}' +
+      '.tot{margin-top:14px;font-size:14px}</style></head><body>' +
+      '<h1>Ficus Investments — Monthly Rent Summary</h1><p>' + sumTitle() + '</p>' +
+      '<table><thead><tr><th>Property</th><th>Tenant</th><th>Due</th><th>Expected</th><th>Paid</th><th>Remaining</th><th>Status</th></tr></thead><tbody>' + rows + '</tbody></table>' +
+      '<div class="tot">Opening balance: <b>' + document.getElementById('sumOpen').textContent + '</b> · Paid: <b>' +
+      document.getElementById('sumPaid').textContent + '</b> · Outstanding: <b>' + document.getElementById('sumOut').textContent + '</b></div>' +
+      '</body></html>');
+    w.document.close();
+    w.focus();
+    setTimeout(function () { w.print(); }, 300);
+  }
+  function csvCell(v) { return '"' + String(v === null || v === undefined ? '' : v).replace(/"/g, '""') + '"'; }
+  function sumExcel() {
+    var lines = [['Property', 'Tenant', 'Due date', 'Expected', 'Paid', 'Remaining', 'Status'].map(csvCell).join(',')];
+    sumRows.forEach(function (p) {
+      lines.push([p.property_name, p.contact_name || '', p.due_date, num(p.expected_amount).toFixed(2), num(p.paid_total).toFixed(2),
+        sumRemaining(p).toFixed(2), statusText(p.status)].map(csvCell).join(','));
+    });
+    var blob = new Blob(['\uFEFF' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'monthly-summary-' + sumDate.getFullYear() + '-' + String(sumDate.getMonth() + 1).padStart(2, '0') + '.csv';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+  }
+  window.openSummary = function () {
+    sumDate = new Date();
+    sumDate.setDate(1);
+    document.getElementById('sumOverlay').classList.add('open');
+    loadSummary();
+  };
+  window.closeSummary = function () { document.getElementById('sumOverlay').classList.remove('open'); };
+  document.getElementById('sumPrev').addEventListener('click', function () { sumDate.setMonth(sumDate.getMonth() - 1); loadSummary(); });
+  document.getElementById('sumNext').addEventListener('click', function () { sumDate.setMonth(sumDate.getMonth() + 1); loadSummary(); });
+  document.getElementById('sumBad').addEventListener('click', showSumTip);
+  document.getElementById('sumPrint').addEventListener('click', sumPrint);
+  document.getElementById('sumExcel').addEventListener('click', sumExcel);
+  document.getElementById('sumEmail').addEventListener('click', function () {
+    alert('Email summary will be connected in the next update.');
+  });
+  document.getElementById('sumList').addEventListener('click', onAction);
+  document.getElementById('sumOverlay').addEventListener('click', function (e) {
+    if (e.target.id === 'sumOverlay') window.closeSummary();
+  });
+
+  // header button (added here so index.html does not need to change)
+  (function () {
+    var bar = document.querySelector('.header-actions');
+    if (!bar) return;
+    var b = document.createElement('button');
+    b.className = 'btn-pill';
+    b.type = 'button';
+    b.textContent = 'Monthly summary';
+    b.addEventListener('click', window.openSummary);
+    bar.insertBefore(b, bar.children[1] ? bar.children[1] : null);
+  })();
+
   /* ---------- refresh everything visible ---------- */
   async function refreshAll() {
     await refreshOpenPayments();
     if (document.getElementById('openPayOverlay').classList.contains('open')) renderOpenModal();
     if (document.getElementById('histOverlay').classList.contains('open')) await loadHistory();
+    if (document.getElementById('sumOverlay').classList.contains('open')) await loadSummary();
     var hb = document.getElementById('propHistoryBox');
     if (hb && hb.style.display === 'block' && curPropId) await loadPropertyHistory(curPropId);
   }
