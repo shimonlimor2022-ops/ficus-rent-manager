@@ -7,9 +7,20 @@ function json(data, status = 200) {
     headers: { 'Content-Type': 'application/json' },
   });
 }
+
+let schemaReady = null;
+function ensureSchema() {
+  if (!schemaReady) {
+    schemaReady = sql`ALTER TABLE properties ADD COLUMN IF NOT EXISTS track_lease BOOLEAN DEFAULT true`
+      .catch((err) => { schemaReady = null; throw err; });
+  }
+  return schemaReady;
+}
+
 export default async (req) => {
   if (!(await isAuthenticated(req))) return authJson({ error: 'unauthorized' }, 401);
   try {
+    await ensureSchema();
     if (req.method === 'GET') {
       const rows = await sql`
         SELECT * FROM properties
@@ -21,6 +32,7 @@ export default async (req) => {
       const b = await req.json();
       if (!b.property_name) return json({ error: 'property_name is required' }, 400);
       const taxType = b.tax_type === 'vat' ? 'vat' : 'stamp';
+      const trackLease = b.track_lease === undefined ? true : !!b.track_lease;
       const [row] = await sql`
         INSERT INTO properties (
           property_name, address,
@@ -30,7 +42,7 @@ export default async (req) => {
           notes,
           tax_type, tax_rate,
           lease_expiry_date, lease_auto_renew, due_day,
-          track_payments
+          track_payments, track_lease
         ) VALUES (
           ${b.property_name}, ${b.address || null},
           ${b.contact_name || null}, ${b.contact_phone || null}, ${b.contact_email || null},
@@ -39,7 +51,7 @@ export default async (req) => {
           ${b.notes || null},
           ${taxType}, ${b.tax_rate || null},
           ${b.lease_expiry_date || null}, ${!!b.lease_auto_renew}, ${b.due_day || null},
-          ${!!b.track_payments}
+          ${!!b.track_payments}, ${trackLease}
         )
         RETURNING *
       `;
@@ -50,6 +62,7 @@ export default async (req) => {
       if (!b.id) return json({ error: 'missing id' }, 400);
       if (!b.property_name) return json({ error: 'property_name is required' }, 400);
       const taxType = b.tax_type === 'vat' ? 'vat' : 'stamp';
+      const trackLease = b.track_lease === undefined ? true : !!b.track_lease;
       const [row] = await sql`
         UPDATE properties SET
           property_name = ${b.property_name},
@@ -67,7 +80,8 @@ export default async (req) => {
           lease_expiry_date = ${b.lease_expiry_date || null},
           lease_auto_renew = ${!!b.lease_auto_renew},
           due_day = ${b.due_day || null},
-          track_payments = ${!!b.track_payments}
+          track_payments = ${!!b.track_payments},
+          track_lease = ${trackLease}
         WHERE id = ${b.id}
         RETURNING *
       `;
