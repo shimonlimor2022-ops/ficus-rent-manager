@@ -660,7 +660,16 @@ function paymentPill(p){
     else pill = '<span class="pill pill-danger">Not paid</span>';
     const earlier = (last.not_paid_count || 0) - (last.status === 'paid' ? 0 : 1);
     const more = earlier > 0 ? `<div class="date-label" style="color:var(--danger);">+${earlier} earlier unpaid</div>` : '';
-    return pill + `<div class="date-label">Due ${fmtDate(last.due_date)}</div>` + more;
+    const exp = last.expected_amount === null || last.expected_amount === undefined ? null : Number(last.expected_amount);
+    const paidAmt = Number(last.paid_total || 0);
+    let amounts = '';
+    if(exp !== null && last.status !== 'paid'){
+      const rem = Math.max(0, exp - paidAmt);
+      amounts = last.status === 'partial'
+        ? `<div class="date-label">Paid ${fmtMoney(paidAmt)} of ${fmtMoney(exp)}</div><div class="date-label" style="color:var(--danger);">Remaining ${fmtMoney(rem)}</div>`
+        : `<div class="date-label" style="color:var(--danger);">Remaining ${fmtMoney(rem)}</div>`;
+    }
+    return pill + `<div class="date-label">Due ${fmtDate(last.due_date)}</div>` + amounts + more;
   }
   const days = daysUntil(p.next_payment_date);
   if(days === null) return '<span class="pill pill-muted">Not set</span>';
