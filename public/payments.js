@@ -89,10 +89,9 @@
     '.sum-tip .r:first-of-type{border-top:none;}',
     '.sum-export{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 4px;}',
     '.pay-badge{display:inline-block;min-width:18px;padding:1px 6px;border-radius:99px;background:var(--danger);color:#fff;font-size:11px;font-weight:700;text-align:center;}',
-    '.pay-add div:has(> label){position:relative;padding-bottom:20px;}',
-    '.pay-add > button{margin-bottom:20px;}',
     '.pay-add input,.pay-add select{height:40px;box-sizing:border-box;}',
-    '.dlabel{position:absolute;left:2px;bottom:2px;font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;}'
+    '.dsel{display:flex;gap:4px;}',
+    '.dsel select{font-family:Inter,sans-serif;border:1px solid var(--border);border-radius:8px;padding:0 6px;font-size:13.5px;background:#fff;color:var(--text);}'
   ].join('\n');
   document.head.appendChild(css);
 
@@ -620,19 +619,45 @@
     }
   });
 
-  /* ---------- show every date with the month name written out ---------- */
+  /* ---------- dates: day / month name / year selects (value stays in the hidden date input) ---------- */
+  function pad2(n) { return String(n).padStart(2, '0'); }
+  function buildDate(inp) {
+    var box = document.createElement('div');
+    box.className = 'dsel';
+    var d = document.createElement('select'), m = document.createElement('select'), y = document.createElement('select');
+    d.innerHTML = '<option value="">Day</option>';
+    for (var i = 1; i <= 31; i++) d.innerHTML += '<option value="' + i + '">' + i + '</option>';
+    m.innerHTML = '<option value="">Month</option>' + MONTHS.map(function (n, k) { return '<option value="' + (k + 1) + '">' + n + '</option>'; }).join('');
+    y.innerHTML = '<option value="">Year</option>';
+    for (var yy = 2015; yy <= 2035; yy++) y.innerHTML += '<option value="' + yy + '">' + yy + '</option>';
+    [d, m, y].forEach(function (el) {
+      el.addEventListener('change', function () {
+        if (d.value && m.value && y.value) {
+          var dim = new Date(Number(y.value), Number(m.value), 0).getDate();
+          inp.value = y.value + '-' + pad2(m.value) + '-' + pad2(Math.min(Number(d.value), dim));
+        } else {
+          inp.value = '';
+        }
+        inp._last = inp.value;
+        inp.dispatchEvent(new Event('input', { bubbles: true }));
+      });
+      box.appendChild(el);
+    });
+    inp.style.display = 'none';
+    inp.parentNode.insertBefore(box, inp.nextSibling);
+    inp._dsel = { d: d, m: m, y: y };
+    inp._last = '\u0000';
+  }
   function syncDates() {
     document.querySelectorAll('input[type=date]').forEach(function (inp) {
-      var l = inp.nextElementSibling;
-      if (!l || !l.classList.contains('dlabel')) {
-        l = document.createElement('div');
-        l.className = 'dlabel';
-        inp.parentNode.insertBefore(l, inp.nextSibling);
-      }
-      var t = inp.value
-        ? new Date(inp.value + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
-        : '';
-      if (l.textContent !== t) l.textContent = t;
+      if (!inp._dsel) buildDate(inp);
+      if (inp.value === inp._last) return;
+      inp._last = inp.value;
+      var s = inp._dsel;
+      var p = inp.value ? inp.value.split('-') : ['', '', ''];
+      s.y.value = p[0] ? String(Number(p[0])) : '';
+      s.m.value = p[1] ? String(Number(p[1])) : '';
+      s.d.value = p[2] ? String(Number(p[2])) : '';
     });
   }
   setInterval(syncDates, 300);
