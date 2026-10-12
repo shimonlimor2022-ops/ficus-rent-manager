@@ -89,7 +89,9 @@
     '.sum-tip .r:first-of-type{border-top:none;}',
     '.sum-export{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 4px;}',
     '.pay-badge{display:inline-block;min-width:18px;padding:1px 6px;border-radius:99px;background:var(--danger);color:#fff;font-size:11px;font-weight:700;text-align:center;}',
-    '.dlabel{font-size:12px;font-weight:600;color:var(--text);margin-top:4px;min-height:14px;}'
+    '.pay-add div:has(> label){position:relative;padding-bottom:20px;}',
+    '.pay-add > button{margin-bottom:20px;}',
+    '.dlabel{position:absolute;left:2px;bottom:2px;font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;}'
   ].join('\n');
   document.head.appendChild(css);
 
