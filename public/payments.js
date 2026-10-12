@@ -91,6 +91,7 @@
     '.pay-badge{display:inline-block;min-width:18px;padding:1px 6px;border-radius:99px;background:var(--danger);color:#fff;font-size:11px;font-weight:700;text-align:center;}',
     '.pay-add div:has(> label){position:relative;padding-bottom:20px;}',
     '.pay-add > button{margin-bottom:20px;}',
+    '.pay-add input,.pay-add select{height:40px;box-sizing:border-box;}',
     '.dlabel{position:absolute;left:2px;bottom:2px;font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;}'
   ].join('\n');
   document.head.appendChild(css);
