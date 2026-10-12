@@ -722,7 +722,7 @@ function render(){
         <td data-label="Tax"><span class="date-label" style="margin-top:0;">${taxLabel(p)}</span></td>
         <td data-label="Total"><span class="rent-amt">${totalLabel(p)}</span></td>
         <td data-label="Lease expiry" class="hide-mobile">${leaseExpiryPill(p)}<div class="date-label">${fmtDate(p.lease_expiry_date)}</div></td>
-        <td data-label="Next payment">${paymentPill(p)}${p.track_payments ? `<div class="date-label">Next ${fmtDate(p.next_payment_date)}</div>` : ''}</td>
+        <td data-label="Next payment" ${p.track_payments ? `style="cursor:pointer;" title="Update payment status" onclick="event.stopPropagation(); editProp(${p.id}); propTab('history');"` : ''}>${paymentPill(p)}${p.track_payments ? `<div class="date-label">Next ${fmtDate(p.next_payment_date)}</div>` : ''}</td>
         <td data-label="Rent change">${rentChangePill(p)}<div class="date-label">${fmtDate(p.rent_change_date)}</div>${p.new_rent_amount ? `<div class="new-amt">→ ${fmtMoney(p.new_rent_amount)}</div>` : ''}</td>
         <td class="hide-mobile-3">
           <div class="row-actions">
