@@ -88,7 +88,8 @@
     '.sum-tip .r{display:flex;justify-content:space-between;gap:10px;font-size:12.5px;color:#EFECEA;padding:7px 0;border-top:1px solid #2A281F;}',
     '.sum-tip .r:first-of-type{border-top:none;}',
     '.sum-export{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 4px;}',
-    '.pay-badge{display:inline-block;min-width:18px;padding:1px 6px;border-radius:99px;background:var(--danger);color:#fff;font-size:11px;font-weight:700;text-align:center;}'
+    '.pay-badge{display:inline-block;min-width:18px;padding:1px 6px;border-radius:99px;background:var(--danger);color:#fff;font-size:11px;font-weight:700;text-align:center;}',
+    '.dlabel{font-size:12px;font-weight:600;color:var(--text);margin-top:4px;min-height:14px;}'
   ].join('\n');
   document.head.appendChild(css);
 
@@ -615,6 +616,23 @@
       alert(err.message || 'Something went wrong.');
     }
   });
+
+  /* ---------- show every date with the month name written out ---------- */
+  function syncDates() {
+    document.querySelectorAll('input[type=date]').forEach(function (inp) {
+      var l = inp.nextElementSibling;
+      if (!l || !l.classList.contains('dlabel')) {
+        l = document.createElement('div');
+        l.className = 'dlabel';
+        inp.parentNode.insertBefore(l, inp.nextSibling);
+      }
+      var t = inp.value
+        ? new Date(inp.value + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+        : '';
+      if (l.textContent !== t) l.textContent = t;
+    });
+  }
+  setInterval(syncDates, 300);
 
   // header button (added here so index.html does not need to change)
   (function () {
