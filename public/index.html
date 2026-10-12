@@ -543,7 +543,7 @@ tbody tr:hover{background:#F0EDFB;}
   </div>
 </div>
 
-<script src="/payments.js?v=2"></script>
+<script src="/payments.js?v=3"></script>
 <script>
 const API = '/api/properties';
 const TEAM_API = '/api/team';
@@ -652,12 +652,21 @@ function leaseExpiryPill(p){
 
 function paymentPill(p){
   if(!p.track_payments) return '<span class="pill pill-muted">Not tracked</span>';
+  const last = (window.latestPaymentByProp || {})[p.id];
+  if(last){
+    let pill;
+    if(last.status === 'paid') pill = '<span class="pill pill-ok">Paid</span>';
+    else if(last.status === 'partial') pill = '<span class="pill pill-warn">Partially paid</span>';
+    else pill = '<span class="pill pill-danger">Not paid</span>';
+    const earlier = (last.not_paid_count || 0) - (last.status === 'paid' ? 0 : 1);
+    const more = earlier > 0 ? `<div class="date-label" style="color:var(--danger);">+${earlier} earlier unpaid</div>` : '';
+    return pill + `<div class="date-label">Due ${fmtDate(last.due_date)}</div>` + more;
+  }
   const days = daysUntil(p.next_payment_date);
   if(days === null) return '<span class="pill pill-muted">Not set</span>';
-  if(days < 0) return '<span class="pill pill-danger">Expired</span>';
-  if(days <= 7) return `<span class="pill pill-danger">${days}d left</span>`;
-  if(days <= 90) return `<span class="pill pill-warn">${days}d left</span>`;
-  return '<span class="pill pill-ok">OK</span>';
+  if(days <= 0) return '<span class="pill pill-danger">Not paid</span>';
+  if(days <= 7) return `<span class="pill pill-warn">Due in ${days}d</span>`;
+  return `<span class="pill pill-muted">Due in ${days}d</span>`;
 }
 
 function rentChangePill(p){
@@ -713,7 +722,7 @@ function render(){
         <td data-label="Tax"><span class="date-label" style="margin-top:0;">${taxLabel(p)}</span></td>
         <td data-label="Total"><span class="rent-amt">${totalLabel(p)}</span></td>
         <td data-label="Lease expiry" class="hide-mobile">${leaseExpiryPill(p)}<div class="date-label">${fmtDate(p.lease_expiry_date)}</div></td>
-        <td data-label="Next payment">${paymentPill(p)}${p.track_payments ? `<div class="date-label">${fmtDate(p.next_payment_date)}</div>` : ''}</td>
+        <td data-label="Next payment">${paymentPill(p)}${p.track_payments ? `<div class="date-label">Next ${fmtDate(p.next_payment_date)}</div>` : ''}</td>
         <td data-label="Rent change">${rentChangePill(p)}<div class="date-label">${fmtDate(p.rent_change_date)}</div>${p.new_rent_amount ? `<div class="new-amt">→ ${fmtMoney(p.new_rent_amount)}</div>` : ''}</td>
         <td class="hide-mobile-3">
           <div class="row-actions">
