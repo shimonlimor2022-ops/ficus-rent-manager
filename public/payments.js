@@ -315,6 +315,15 @@
       }
     });
     window.openPaymentsInfo = { count: openList.length, remaining: remaining };
+    try {
+      var latest = await api(API + '?view=latest');
+      var map = {};
+      latest.forEach(function (r) { map[r.property_id] = r; });
+      window.latestPaymentByProp = map;
+    } catch (err) {
+      window.latestPaymentByProp = window.latestPaymentByProp || {};
+    }
+    if (typeof window.render === 'function') window.render();
     var badge = document.getElementById('openPayBadge');
     if (badge) {
       badge.textContent = openList.length;
@@ -542,8 +551,14 @@
   document.getElementById('sumBad').addEventListener('click', showSumTip);
   document.getElementById('sumPrint').addEventListener('click', sumPrint);
   document.getElementById('sumExcel').addEventListener('click', sumExcel);
-  document.getElementById('sumEmail').addEventListener('click', function () {
-    alert('Email summary will be connected in the next update.');
+  document.getElementById('sumEmail').addEventListener('click', async function () {
+    if (!confirm('Email the summary for ' + sumTitle() + ' to your notification addresses?')) return;
+    try {
+      var r = await post({ action: 'email_summary', month: sumDate.getMonth() + 1, year: sumDate.getFullYear() });
+      alert('Summary sent to: ' + (r.sent_to || []).join(', '));
+    } catch (err) {
+      alert(err.message || 'Could not send the summary.');
+    }
   });
   document.getElementById('sumList').addEventListener('click', onAction);
   document.getElementById('sumOverlay').addEventListener('click', function (e) {
