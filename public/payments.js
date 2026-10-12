@@ -148,6 +148,7 @@
           '<div><label>Date paid</label><input type="date" id="spDate"></div>' +
           '<div><label>Amount paid (€)</label><input type="number" step="0.01" min="0" id="spAmount"></div>' +
         '</div>' +
+        '<div id="spRem" style="flex-basis:100%;font-size:13px;font-weight:600;color:var(--danger);"></div>' +
         '<button type="button" class="pay-btn ok" id="spSave">Save</button>' +
         '<button type="button" class="pay-btn" id="spCancel">Cancel</button>' +
       '</div>' +
@@ -210,6 +211,40 @@
     '</div>';
   }
 
+  /* ---------- live "paid / remaining" note + automatic status ---------- */
+  function updateRem(prefix, autoStatus) {
+    var st = document.getElementById(prefix + 'Status');
+    var expEl = document.getElementById(prefix + 'Expected');
+    var amtEl = document.getElementById(prefix + 'Amount');
+    var note = document.getElementById(prefix + 'Rem');
+    if (!st || !expEl || !amtEl || !note) return;
+    var exp = Number(expEl.value);
+    var amt = Number(amtEl.value);
+    if (autoStatus && st.value !== 'unpaid' && exp > 0 && amt > 0) {
+      var want = amt < exp ? 'partial' : 'paid';
+      if (st.value !== want) {
+        st.value = want;
+        st.dispatchEvent(new Event('change'));
+      }
+    }
+    if (!(exp > 0)) { note.textContent = ''; return; }
+    if (st.value === 'unpaid') {
+      note.textContent = 'Not paid. Remaining ' + money(exp);
+    } else if (amt > 0 && amt < exp) {
+      note.textContent = 'Partially paid: ' + money(amt) + ' of ' + money(exp) + '. Remaining ' + money(exp - amt);
+    } else {
+      note.textContent = '';
+    }
+  }
+  function wireRem(prefix) {
+    ['Expected', 'Amount'].forEach(function (f) {
+      var el = document.getElementById(prefix + f);
+      if (el) el.addEventListener('input', function () { updateRem(prefix, true); });
+    });
+    var st = document.getElementById(prefix + 'Status');
+    if (st) st.addEventListener('change', function () { updateRem(prefix, false); });
+  }
+
   function defaultExpected() {
     try {
       if (typeof properties !== 'undefined' && typeof totalWithTax === 'function') {
@@ -239,6 +274,7 @@
       document.getElementById('ppExpected').value = defaultExpected();
       document.getElementById('ppAmount').value = defaultExpected();
       ppToggle();
+      updateRem('pp', false);
       return;
     }
     if (act === 'pp-cancel') { document.getElementById('ppForm').classList.remove('show'); return; }
@@ -412,6 +448,7 @@
           '<div><label>Date paid</label><input type="date" id="ppDate"></div>' +
           '<div><label>Amount paid (€)</label><input type="number" step="0.01" min="0" id="ppAmount"></div>' +
         '</div>' +
+        '<div id="ppRem" style="flex-basis:100%;font-size:13px;font-weight:600;color:var(--danger);"></div>' +
         '<button type="button" class="pay-btn ok" data-act="pp-save">Save</button>' +
         '<button type="button" class="pay-btn" data-act="pp-cancel">Cancel</button>' +
       '</div>';
@@ -421,6 +458,7 @@
         ? rows.map(function (p) { return card(p, false); }).join('')
         : '<div class="pay-empty">No payments yet. Payments appear here once a due date arrives (with "Track rent payments" turned on), or add a past payment above.</div>');
       document.getElementById('ppStatus').addEventListener('change', ppToggle);
+      wireRem('pp');
     } catch (err) {
       box.innerHTML = head + '<div class="pay-empty">Could not load the history.</div>';
     }
@@ -598,7 +636,9 @@
     document.getElementById('spDate').value = todayIso();
     spDefaults();
     spToggle();
+    updateRem('sp', false);
   });
+  wireRem('sp');
   document.getElementById('spProp').addEventListener('change', spDefaults);
   document.getElementById('spStatus').addEventListener('change', spToggle);
   document.getElementById('spCancel').addEventListener('click', function () {
